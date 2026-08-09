@@ -33,6 +33,11 @@ vfms/
 │   │   │   └── auth_guard.py
 │   │   └── utils/
 │   │       └── logger.py
+│   ├── db/                           # PostgreSQL schema — DB Engineer's home base
+│   │   ├── schema.sql                # authoritative DDL, generated from app/models/*.py                 
+│   │   └── README.md                 # setup instructions + example queries
+│   ├── migrations/                 
+│   │                                 
 │   ├── migrations/
 │   ├── seeds/
 │   ├── tests/
