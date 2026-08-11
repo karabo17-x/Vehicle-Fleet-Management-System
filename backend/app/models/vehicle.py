@@ -20,6 +20,12 @@ class Vehicle(Base):
     year: Mapped[str] = mapped_column(Integer, nullable=False)
     status: Mapped[VehicleStatus] = mapped_column(Enum(VehicleStatus), default=VehicleStatus.ACTIVE, nullable = False)  
 
+    #document expiry feature6: expiry warnings 
+    insurance_expiry: Mapped[datetime|None] = mapped_column(Datetime, nullable =True)
+    roadworthy_expiry: Mapped[datetime|None] = mapped_column(Datetime, nullable=True)
+
+    #feature3: which driver has a vehicle
+    #assigment history tracked
     current_driver_id: Mapped[int | None] = mapped_column(ForeignKey("drivers.id"), nullable = True)
     created_at: Mapped[datetime] = mapped_column(Datetime,server_default=func.now())
     updated_at:Mapped[datetime] = mapped_column(Datetime, server_default=func.now(), onupdate=func.now())
