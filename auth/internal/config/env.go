@@ -1,9 +1,10 @@
 package config
-import{
+
+import (
 	"os"
 	"strconv"
 	"time"
-}
+)
 
 //config holds auth service needed at startup
 type Config struct{
@@ -21,7 +22,7 @@ type Config struct{
 
 	//rate limit for login endpoint
 	RateLimitRequests int 
-	RateLImitWindow time.Duration
+	RateLimitWindow time.Duration
 
 	SeedUsersEnabled bool
 }
