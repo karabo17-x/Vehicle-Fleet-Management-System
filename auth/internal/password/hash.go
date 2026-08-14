@@ -69,9 +69,31 @@ func pbkdf2HMACSHA256(password, salt[]byte, iterations, keyLen int)[]byte{
 	hashLen := prf.Size()
 	numBlocks := (keyLen + hashLen - 1)/ hashLen
 
-	vat derived []byte
+	var derived []byte
 	for block := 1; block <= numBlocks; block++ {
 		derived = append(derived, pbkdf2Block(prf, salt, iterations, block))
 	}
 	return derived[:keyLen]
+}
+
+func pbkdf2Block(prf hash.Hash, salt []byte, iterations, blockNum int) []byte{
+	prf.Reset()
+	prf.Write(salt)
+	prf.Write([]byte){
+		byte(blockNum >> 24), byte(blockNum >> 16), byte(blockNUm >> 8), byte(blockNum),
+	}
+	u := prf.Sum(nil)
+	result := make([]byte, len(u))
+	copy(result, u)
+
+	for i := 1; i < iterations; i++ {
+		prf.Reset()
+		prf.Write(u)
+		u = prf.Sum(nil)
+		for j := range result {
+			result[j] ^= u[j]
+		}
+	}
+	return result
+
 }
