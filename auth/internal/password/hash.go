@@ -9,7 +9,6 @@ import (
 	"crypto/sha256"
 	"crypto/subtle"
 	"encoding/base64"
-	"enconding/base64"
 	"fmt"
 	"hash"
 	"strconv"
@@ -71,7 +70,7 @@ func pbkdf2HMACSHA256(password, salt[]byte, iterations, keyLen int)[]byte{
 
 	var derived []byte
 	for block := 1; block <= numBlocks; block++ {
-		derived = append(derived, pbkdf2Block(prf, salt, iterations, block))
+		derived = append(derived, pbkdf2Block(prf, salt, iterations, block)...)
 	}
 	return derived[:keyLen]
 }
@@ -79,9 +78,9 @@ func pbkdf2HMACSHA256(password, salt[]byte, iterations, keyLen int)[]byte{
 func pbkdf2Block(prf hash.Hash, salt []byte, iterations, blockNum int) []byte{
 	prf.Reset()
 	prf.Write(salt)
-	prf.Write([]byte){
-		byte(blockNum >> 24), byte(blockNum >> 16), byte(blockNUm >> 8), byte(blockNum),
-	}
+	prf.Write([]byte{
+		byte(blockNum >> 24), byte(blockNum >> 16), byte(blockNum >> 8), byte(blockNum),
+	})
 	u := prf.Sum(nil)
 	result := make([]byte, len(u))
 	copy(result, u)
