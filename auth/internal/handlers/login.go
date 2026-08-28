@@ -53,9 +53,66 @@ func Login(d Deps) http.HandlerFunc {
 			//same error for "no such user" and "wrong password"
 			//dnt leak which emails are registered
 			writeError(w, http.StatusUnauthorized, "Invalid email or password")
-			
+			return
 		 }
+
+		 access, refresh, err := issueTokenPair(d, u.ID, u.Email, u.Role)
+		 if err != nil {
+			writeError(w, http.StatusInternalServerError,"could not issue token")
+			return
+		 }
+
+		 writeJSON(w, http.StatusOK, tokenResponse{
+			AccessToken: access,
+			RefreshToken: refresh,
+			TokenTYpe: "Bearer",
+			ExpiresIn: int64(d.AccessTokenTTL.seconds()),
+			Role: u.Role,
+		 })
 	}
 }
+
+func issueTokenPair(d Deps, userID, email, role, role string)(accessToken, refreshToken string, err error){
+	now := time.Now()
+
+	access := token.Claims{
+		Subject: userID,
+		Email: email,
+		Role: role,
+		TokenType: "access",
+		Issuer: d.Issuer,
+		IssuedAt: now.Unix(),
+		ExpiresAt: now.Add(d.AccessTokenTTL).Unix(),
+	}
+	refresh := token.Claims{
+		Subject: userID,
+		Email: email,
+		Role: role,
+		TokenType: "refresh",
+		Issuer: d.Issuer,
+		IssuedAt: now.Unix(),
+		ExpiresAt: now.Add(d.RefreshTokenTTL).Unix(),
+	}
+
+
+}
+
+func clientIP(r *http.Request) string {
+	//behing a reverse proxy,  read X-forwarded-For
+	//deployment RemoteAddr sufficient
+	return r.RemoteAddr
+}
+
+func writeJSON(w http.ResponseWriter, status int, body any){
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(status)
+	_ = json.NewEncoder(w).Encode(body)
+
+}
+
+func writeError(w http.ResponseWriter, status int, message string){
+	writeJSON(w, status, map[string]string{"error": message})
+}
+
 
 
