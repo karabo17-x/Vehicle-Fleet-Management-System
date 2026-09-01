@@ -25,7 +25,7 @@ func Refresh(d Deps) http.HandlerFunc {
 			writeError(w, http.StatusBadRequest, "invalid request")
 			return
 		}
-		 claims, err := token.Verify(req.RefreshToken)
+		 claims, err := token.Verify(req.RefreshToken, d.Keys.Public)
 		 if err != nil {
 			status := http.StatusUnauthorized
 			msg := "invalid refresh token"
@@ -41,9 +41,15 @@ func Refresh(d Deps) http.HandlerFunc {
 			return
 		 }
 
-		 access, refresh, err := issueTokenPair()
+		 //confirm account exist
+		 u, err := d.Users.FindByID(claims.Subject)
 		 if err != nil {
-			writeError(w, http.StatusInternalServerError, "could not issue toekn")
+			writeError(w, http.StatusUnauthorized, "account no longer exists")
+		 }
+
+		 access, refresh, err := issueTokenPair(d, u.ID, u.Email, u.Role)
+		 if err != nil {
+			writeError(w, http.StatusInternalServerError, "could not issue token")
 			return 
 		 }
 
