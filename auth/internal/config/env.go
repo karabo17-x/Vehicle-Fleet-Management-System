@@ -9,7 +9,7 @@ import (
 //config holds auth service needed at startup
 type Config struct{
 	Port string
-
+	//RSA keypair used to sign/veify JWTs
 	PrivateKeyPath string
 	PublicKeyPath string
 
@@ -29,15 +29,15 @@ type Config struct{
 
 func Load() Config{
 	return Config{
-		Port:              getEnv(),
-		PrivateKeyPath:  getEnv(),
-		PublicKeyPath:   getEnv(),
-		AccessTokenTTL:  getEnvDuration(),
-		RefreshTokenTTL: getEnvDuration(),
-		Issuer:            getEnv(),
-		RateLimitRequests: getEnvInt(),
-		RateLimitWindow:   getEnvDuration(),
-		SeedUsersEnabled:  getEnvBool(),
+		Port:              getEnv("AUTH_PORT", "8081"),
+		PrivateKeyPath:  getEnv("JWT_PRIVATE_KEY_PATH", "./keys/private.pem"),
+		PublicKeyPath:   getEnv("JWT_PUBLIC_KEY_PATH", "./keys/public.pem"),
+		AccessTokenTTL:  getEnvDuration("ACCESS_TOKEN_TTL", 15*time.Minute),
+		RefreshTokenTTL: getEnvDuration("REFRESH_TOKEN_TTL",7*24*time.Hour),
+		Issuer:            getEnv("JWT_ISSUER","auth"),
+		RateLimitRequests: getEnvInt("RATE_LIMIT_REQUESTS", 5),
+		RateLimitWindow:   getEnvDuration("RATE_LIMIT_WINDOW", time.Minute),
+		SeedUsersEnabled:  getEnvBool("SEED_DEMO_USERS", true),
 	}
 }
 
