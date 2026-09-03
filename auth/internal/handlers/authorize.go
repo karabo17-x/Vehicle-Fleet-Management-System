@@ -11,8 +11,8 @@ import (
  type authorizeResponse struct {
 	Valid bool `json:"valid"`
 	Sub string `json:"sub,omitempty"`
-	Email string `json:"email,omitempty`
-	Role string `json:role,omitempty"`
+	Email string `json:"email,omitempty"`
+	Role string `json:"role,omitempty"`
  }
 
  //authorise handlers GET/authorize.
