@@ -11,6 +11,7 @@ import (
 	"encoding/pem"
 	"fmt"
 	"os"
+	"path/filepath"
 )
 
 //keyPair bundles the RSA private/public keys used to sign and verify
@@ -71,20 +72,42 @@ func generateAndSave(privatePath, publicPath string) (*KeyPair, error){
 	if err != nil {
 		return nil, fmt.Errorf("generate key: %w", err)
 	}
-	if err != nil {
+	if err := os.MkdirAll(filepath.Dir(privatePath), 0o700); err != nil{
 		return nil, fmt.Errorf("create key dir: %w", err)
 	}
-	if err != nil{
-		return nil, fmt.Errorf("write private key: %w", err)
 
+
+	if err := os.MkdirAll(filepath.Dir(publicPath), 0o700); err != nil {
+		return nil, fmt.Errorf("create key dir: %w", err)
 	}
 	
 	privPEM := pem.EncodeToMemory(&pem.Block{
 		Type: "RSA PRIVATE KEY",
-		Bytes: x509.MarshalPKCSPrivateKey(priv),
+		Bytes: x509.MarshalPKCS1PrivateKey(priv),
 	})
 	if err := os.WriteFile(privatePath, privPEM, 0o600); err != nil{
 		return nil, fmt.Errorf("write private key: %w", err)
 	}
-	return &KeyPair{Private: priv}, nil
+
+	pubPEM := pem.EncodeToMemory(&pem.Block{
+		Type: "RSA PUBLIC KEY",
+		Bytes: x509.MarshalPKCS1PublicKey(&priv.PublicKey),
+	})
+	if err := os.WriteFile(publicPath, pubPEM, 0o644); err != nil{
+		return nil, fmt.Errorf("write public key: %w", err)
+	}
+	return &KeyPair{Private: priv, Public: &priv.PublicKey}, nil
 }
+
+//publicKeyPEM returns PEM encoded public key to be served
+//over HTTP(see handlers.PublicKey) for FastAPI backend
+//service can fetch and verify tokens without touching the private key
+
+func(k *KeyPair) PublicKeyPEM() []byte{
+	return pem.EncodeToMemory(&pem.Block{
+		Type:	"RSA PUBLIC KEY",
+		Bytes: x509.MarshalPKCS1PublicKey(k.Public),
+		
+	})
+}
+
