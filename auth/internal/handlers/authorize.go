@@ -21,7 +21,7 @@ import (
  func Authorize(d Deps) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request){
 		authHeader := r.Header.Get("Authorization")
-		tokenString := strings.TrimPrefix(authHeader, "Bearer")
+		tokenString := strings.TrimPrefix(authHeader, "Bearer ")
 		if tokenString == "" || tokenString == authHeader{
 			writeJSON(w, http.StatusUnauthorized, authorizeResponse{Valid:false})
 			return
@@ -57,7 +57,7 @@ import (
  func PublicKey(d Deps, pem[]byte) http.HandlerFunc{
 	return func(w http.ResponseWriter, r *http.Request){
 		w.Header().Set("Content-Type", "application/x-pem-file")
-		w.WriteHeader()(http.StatusOK)
+		w.WriteHeader(http.StatusOK)
 		_,_ = w.Write(pem)
 	}
  }
