@@ -23,7 +23,7 @@ type KeyPair struct {
 
 //generate an RSA keypar from PEM file paths
 //files dnt exist, it generates a fresh keypair
-func LoadGenerate(privatePath, publicPath string) (*KeyPair, error) {
+func LoadOrGenerate(privatePath, publicPath string) (*KeyPair, error) {
 	if fileExists(privatePath) && fileExists(publicPath) {
 		return load(privatePath, publicPath)
 
@@ -49,7 +49,20 @@ func load(privatePath, publicPath string) (*KeyPair, error) {
 	if err != nil {
 		return nil, fmt.Errorf("parse private key: %w", err)
 	}
-	return &KeyPair{Private: priv}, nil
+
+	pubBytes, err := os.ReadFile(publicPath)
+	if err != nil{
+		return nil, fmt.Errorf("read public key: %w",err)
+	}
+	pubBlock, _ := pem.Decode(pubBytes)
+	if pubBlock == nil{
+		return nil, fmt.Errorf("invalid PEM in %s", publicPath)
+	}
+	pub, err := x509.ParsePKCS1PublicKey(pubBlock.Bytes)
+	if err != nil{
+		return nil, fmt.Errorf("parse public key: %w", err)
+	}
+	return &KeyPair{Private: priv, Public: pub}, nil
 
 }
 
