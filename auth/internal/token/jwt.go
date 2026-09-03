@@ -68,17 +68,22 @@ func Verify(tokenString string, string, pub *rsa.PublicKey)(*Claims, error){
 
 	hashed := sha256.Sum256([]byte(signingInput))
 	if err := rsa.VerifyPKCS1v15(pub, crypto.SHA256, hashed[:], sig); err != nil{
+		return nil, ErrBadSignature
+	}
+
+	payloadBytes, err := base64.RawURLEncoding.DecodeString(parts[1])
+	if err != nil{
 		return nil, ErrMalformed
 	}
 
 	var claims Claims
-	if err := json.Unmarshal(claims); err != nil{
+	if err := json.Unmarshal(payloadBytes, &claims); err != nil{
 		return nil, ErrMalformed
 	}
 	if time.Now().Unix() > claims.ExpiresAt{
 		return nil, ErrExpired
 	}
-	return claims, nil
+	return &claims, nil
 
 }
 
