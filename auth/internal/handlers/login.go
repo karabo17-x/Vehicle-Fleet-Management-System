@@ -12,6 +12,7 @@ import (
 	"github/karabo17-x/Vehicle-Fleet-Management-System/auth/internal/token"
 )
 
+// deps bundles everything a handler needs. keeps handlers testable in isolation
 type Deps struct {
 	Users	*store.UserStore
 	Keys	*KeyProvider
@@ -21,6 +22,8 @@ type Deps struct {
 	LoginLimiter	*ratelimit.Limiter
 }
 
+//keyProvider exposes the RSA handlers
+//decoupling handlers from token package loading
 type KeyProvider struct {
 	Private *rsa.PrivateKey
 	Public	*rsa.PublicKey
@@ -40,6 +43,7 @@ type tokenResponse struct {
 }
 
 //login handles POST/login, validate credentials 
+//user store , on access, issues short lived access token , refresh token too
 func Login(d Deps) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request){
 		if r.Method != http.MethodPost {
