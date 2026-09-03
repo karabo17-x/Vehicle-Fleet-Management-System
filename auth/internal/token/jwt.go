@@ -5,9 +5,12 @@ import (
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/sha256"
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strings"
+	"time"
 )
 
 var (
@@ -48,6 +51,39 @@ func Sign(claims Claims, priv *rsa.PrivateKey) (string, error) {
 	}
 	return signingInput + "." + b64(sig), nil
 
+}
+
+//verify checks the signature and expiry a JWT and returns. its claims if valid
+func Verify(tokenString string, string, pub *rsa.PublicKey)(*Claims, error){
+	parts := strings.Split(tokenString, ".")
+	if len(parts) != 3{
+		return nil, ErrMalformed
+	}
+
+	signingInput := parts[0] + "." + parts[1]
+	sig, err := base64.RawStdEncoding.DecodeString(parts[2])
+	if err != nil{
+		return nil, ErrMalformed
+	}
+
+	hashed := sha256.Sum256([]byte(signingInput))
+	if err := rsa.VerifyPKCS1v15(pub, crypto.SHA256, hashed[:], sig); err != nil{
+		return nil, ErrMalformed
+	}
+
+	var claims Claims
+	if err := json.Unmarshal(claims); err != nil{
+		return nil, ErrMalformed
+	}
+	if time.Now().Unix() > claims.ExpiresAt{
+		return nil, ErrExpired
+	}
+	return claims, nil
+
+}
+
+func b64(data []byte ) string{
+	return base64.RawURLEncoding.EncodeToString(data)
 }
 
 
