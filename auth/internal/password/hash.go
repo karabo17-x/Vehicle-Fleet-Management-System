@@ -28,7 +28,12 @@ func Hash(plaintext string) (string, error){
 	}
 	derived := pbkdf2HMACSHA256([]byte(plaintext), salt, iterations, keyLen)
 
-	encoded := fmt.Sprintf("pbkdf2-sha256$%d$%s$%s", iterations, base64.RawStdEncoding.EncodeToString(salt),base64.RawStdEncoding.EncodeToString(derived))
+	encoded := fmt.Sprintf(
+		"pbkdf2-sha256$%d$%s$%s", 
+		iterations, 
+		base64.RawStdEncoding.EncodeToString(salt),
+		base64.RawStdEncoding.EncodeToString(derived),
+	)
 	return encoded, nil
 }
 
@@ -66,7 +71,7 @@ func Verify(encoded, plaintext string) bool{
 func pbkdf2HMACSHA256(password, salt[]byte, iterations, keyLen int)[]byte{
 	prf := hmac.New(sha256.New, password)
 	hashLen := prf.Size()
-	numBlocks := (keyLen + hashLen - 1)/ hashLen
+	numBlocks := (keyLen + hashLen - 1) / hashLen
 
 	var derived []byte
 	for block := 1; block <= numBlocks; block++ {
