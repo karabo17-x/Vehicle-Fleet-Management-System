@@ -2,10 +2,11 @@ package handlers
 
 import (
 	"errors"
-	"github/karabo17-x/Vehicle-Fleet-Management-System/auth/internal/rbac"
-	"github/karabo17-x/Vehicle-Fleet-Management-System/auth/internal/token"
 	"net/http"
 	"strings"
+
+	"github/karabo17-x/Vehicle-Fleet-Management-System/auth/internal/rbac"
+	"github/karabo17-x/Vehicle-Fleet-Management-System/auth/internal/token"
 )
 
  type authorizeResponse struct {
@@ -53,16 +54,18 @@ import (
 	}
  }
 
- //publicKey handles GET
- func PublicKey(d Deps, pem[]byte) http.HandlerFunc{
+ //publicKey handles GET ./public-key.pem
+ //FatAPI backend fetch it and verify tokens locally
+ func PublicKey(d Deps, pem []byte) http.HandlerFunc{
 	return func(w http.ResponseWriter, r *http.Request){
 		w.Header().Set("Content-Type", "application/x-pem-file")
 		w.WriteHeader(http.StatusOK)
-		_,_ = w.Write(pem)
+		_, _ = w.Write(pem)
 	}
  }
 
- //health handles GET
+ //health handles GET /health for container liveness
+ //checks
  func Health() http.HandlerFunc{
 	return func(w http.ResponseWriter, r *http.Request){
 		writeJSON(w, http.StatusOK, map[string]string{"status":"ok"})
