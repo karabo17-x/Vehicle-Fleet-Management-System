@@ -1,0 +1,36 @@
+name: Auth CI
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'auth/**'
+      - '.github/workflows/auth-ci.yml'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'auth/**'
+      - '.github/workflows/auth-ci.yml'
+
+jobs:
+  auth-test:
+    name: Auth tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: auth
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+          cache-dependency-path: auth/go.mod
+
+      - name: Install dependencies
+        run: go mod download
+
+      - name: Run auth tests
+        run: go test ./...
