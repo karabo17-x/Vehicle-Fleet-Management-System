@@ -36,7 +36,7 @@ type loginRequest struct {
 
 type tokenResponse struct {
 	AccessToken string `json:"access_token"`
-	RefreshToekn string `json:"refresh_token"`
+	RefreshToken string `json:"refresh_token"`
 	TokenType string `json:"token_type"`
 	ExpiresIn int64 `json:"expires_in"`
 	Role string `json:"role"`
@@ -108,7 +108,7 @@ func issueTokenPair(d Deps, userID, email, role string)(accessToken, refreshToke
 		ExpiresAt: now.Add(d.RefreshTokenTTL).Unix(),
 	}
 
-	accessToken, err = token.Sign(refresh, d.Keys.Private)
+	accessToken, err = token.Sign(access, d.Keys.Private)
 	if err != nil {
 		return "", "", err
 	}
