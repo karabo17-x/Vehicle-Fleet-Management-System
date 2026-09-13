@@ -1,6 +1,9 @@
 # Go
+# Go
 auth/keys/
-auth/auth 
+auth/auth
+
 
 # Env
+.env
 *.pem
