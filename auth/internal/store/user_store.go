@@ -2,8 +2,9 @@ package store
 
 import (
 	"errors"
-	"github/karabo17-x/Vehicle-Fleet-Management-System/auth/internal/password"
 	"sync"
+
+	"github/karabo17-x/Vehicle-Fleet-Management-System/auth/internal/password"
 )
 
 //ErrNotFound is returned when no user matches the given email
@@ -99,4 +100,22 @@ func idFromSeq(seq int) string{
 		seq /= 10
 	}
 	return "usr-" + string(buf)
+}
+
+//SeedDemoUsers for demo RBAC without the registration UI first
+//dev-only seed data, never used outside local
+func(s *UserStore) SeedDemoUsers() error{
+	seeds := []struct {
+		email, pass, role, name string
+	}{
+		{"admin@vfms.local", "Admin@12345", "admin", "Fleet Administrator"},
+		{"manager@vfms.local", "Manager@12345", "manager", "Fleet Manager"},
+		{"staff@vfms.local", "Staff@12345", "staff", "Fleet Staff"},
+	}
+	for _, u := range seeds{
+		if _, err := s.Create(u.email, u.pass, u.role, u.name); err != nil && !errors.Is(err, ErrAlreadyExists){
+			return err
+		}
+	}
+	return nil
 }

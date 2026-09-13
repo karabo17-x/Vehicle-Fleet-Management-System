@@ -54,7 +54,7 @@ func Sign(claims Claims, priv *rsa.PrivateKey) (string, error) {
 }
 
 //verify checks the signature and expiry a JWT and returns. its claims if valid
-func Verify(tokenString string, string, pub *rsa.PublicKey)(*Claims, error){
+func Verify(tokenString string, pub *rsa.PublicKey)(*Claims, error){
 	parts := strings.Split(tokenString, ".")
 	if len(parts) != 3{
 		return nil, ErrMalformed
