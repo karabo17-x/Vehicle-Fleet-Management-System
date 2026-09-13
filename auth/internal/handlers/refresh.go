@@ -45,6 +45,7 @@ func Refresh(d Deps) http.HandlerFunc {
 		 u, err := d.Users.FindByID(claims.Subject)
 		 if err != nil {
 			writeError(w, http.StatusUnauthorized, "account no longer exists")
+			return
 		 }
 
 		 access, refresh, err := issueTokenPair(d, u.ID, u.Email, u.Role)
@@ -55,9 +56,10 @@ func Refresh(d Deps) http.HandlerFunc {
 
 		 writeJSON(w, http.StatusOK, tokenResponse{
 			AccessToken: access,
-			RefreshToekn: refresh,
+			RefreshToken: refresh,
 			TokenType: "Bearer",
 			ExpiresIn: int64(d.AccessTokenTTL.Seconds()),
+			Role:	u.Role,
 			
 		 })
 
