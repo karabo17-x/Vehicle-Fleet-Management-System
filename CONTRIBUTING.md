@@ -205,7 +205,11 @@ git log --oneline                   # see recent commit history
 ---
 
 ## 7. Why we're strict about this 
+<<<<<<< HEAD
 C
+=======
+
+>>>>>>> origin/develop
  this workflow is what makes your **individual
 contribution visible and defensible** for marking, protects the team from one person's mistake
 breaking everyone's work, and is genuinely how software teams outside university operate. Get
