@@ -71,4 +71,13 @@ def asssign_driver(
     user: CurrentUser = Depends(require_roles("manager", "staff")),
 ):
     return VehicleService(db).assign_driver(vehicle_id, payload.driver_id, user.id, user.role)
+
+@router.post("/{vehicle_id}/unassign", response_model=VehicleOut)
+def unassign_driver(
+    vehicle_id: int,
+    db: Session = Depends(get_db),
+    user: CurrentUser = Depends(require_roles("manager", "staff")),
+
+):
+    return VehicleService(db).unassign_driver(vehicle_id, user.id, user.role)
     
