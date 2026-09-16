@@ -33,5 +33,13 @@ def list_vehicles(
         "skip": skip,
         "limit": limit,
     }
+
+@router.get("/{vehicle_id}", response_model=VehicleOut)
+def get_vehicle(
+    vehicle_id: int,
+    db: Session = Depends(get_db),
+    user: CurrentUser = Depends(get_current_user),
+
+)
     
     
