@@ -14,3 +14,9 @@ def create_vehicle(
 ):
     service = VehicleService(db)
     return service.create(payload.model_dump(), user.id, user.role)
+
+@router.get("")
+def list_vehicles(
+    search: str | None = Query(default=none, description="Matches registration, make, model"),
+    status_filter: VehicleStatus | None = Query(default=None, alias="status"),
+)
