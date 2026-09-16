@@ -25,4 +25,10 @@ def list_vehicles(
     user: CurrentUser = Depends(get_current_user),
 
 ):
+    service = VehicleSerice(db)
+    items, total = service.list(search=search, status_filter=status_filter, skip=skip, limit=limit)
+    return{
+        
+    }
+    
     
