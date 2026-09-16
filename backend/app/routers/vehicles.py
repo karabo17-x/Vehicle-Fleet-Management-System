@@ -28,7 +28,10 @@ def list_vehicles(
     service = VehicleSerice(db)
     items, total = service.list(search=search, status_filter=status_filter, skip=skip, limit=limit)
     return{
-        
+        "items": [Vehicle.model_validate(v) for v in items],
+        "total": total,
+        "skip": skip,
+        "limit": limit,
     }
     
     
