@@ -24,3 +24,18 @@ class AssignmentOut(BaseModel):
     unassigned_by: str | None
     is_active: bool
 
+@router.get("/vehicle/{vehicle_id}", response_model=list[AssignmentOut])
+def vehicle_assignment_history(
+    vehicle_id: int,
+    db: Session = Depends(get_db),
+    user: CurrentUser = Depends(get_current_user),
+
+):
+    #assignemt history , feature 3
+    # history of past assignments 
+    history = VehicleService(db).assignment_history(vehicle_id) 
+    return [
+        AssignmentOut(
+            
+        )
+    ]
