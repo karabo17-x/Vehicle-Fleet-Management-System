@@ -61,5 +61,14 @@ def delete_vehicle(
 
 ):
     VehicleService(db).delete(vehicle_id, user.id, user.role)
-    
+
+
+@ router.post("/{vehicle_id}/assign", response_model=VehicleOut)
+def asssign_driver(
+    vehicle_id: int,
+    payload: VehicleAssignRequest,
+    db: Session = Depends(get_db),
+    user: CurrentUser = Depends(require_roles("manager", "staff")),
+):
+    return VehicleService(db).assign_driver(vehicle_id, payload.driver_id, user.id, user.role)
     
