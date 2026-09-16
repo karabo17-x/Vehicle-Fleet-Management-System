@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 
 from app.database  import get_db
 from app.middleware.auth_guard import CurrentUser, get_current_user
-from app.services.vehicle_service import VehicleSerice
+from app.services.vehicle_service import VehicleService
 
 router = APIRouter(prefix="/assignments", tags=["assignments"])
 
@@ -36,6 +36,10 @@ def vehicle_assignment_history(
     history = VehicleService(db).assignment_history(vehicle_id) 
     return [
         AssignmentOut(
-            
+            id=a.id, vehicle_id=a.vehicle_id, driver_id=a.driver_id,
+            assigned_at=a.assigned_at, unassigned_at=a.unassigned_at,
+            assigned_by=a.assigned_by, unassigned_by=a.unassigned_by,
+            is_active=a.is_active,    
         )
+        for a in history
     ]
