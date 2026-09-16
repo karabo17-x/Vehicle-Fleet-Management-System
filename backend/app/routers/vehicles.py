@@ -40,6 +40,15 @@ def get_vehicle(
     db: Session = Depends(get_db),
     user: CurrentUser = Depends(get_current_user),
 
+):
+    return VehicleService(db).get_or_404(vehicle_id)
+
+@router.patch("/{vehicle_id}", response_model=VehicleOut)
+def update_vehicle(
+    vehicle_id: int,
+    payload: VehicleUpdate,
+    db: Session = Depends(get_db),
+    user: CurrentUser = Depends(require_roles("manager")),
 )
     
     
