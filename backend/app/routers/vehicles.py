@@ -19,4 +19,10 @@ def create_vehicle(
 def list_vehicles(
     search: str | None = Query(default=none, description="Matches registration, make, model"),
     status_filter: VehicleStatus | None = Query(default=None, alias="status"),
-)
+    skip: int = Query(default=0, ge=0),
+    limit: int = Query(default=50, ge=1, le=200),
+    db: Session = Depends(get_db),
+    user: CurrentUser = Depends(get_current_user),
+
+):
+    
