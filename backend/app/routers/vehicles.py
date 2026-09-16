@@ -1,7 +1,10 @@
 #vehicle endpoints - feature 1(CRUDfrom 
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
-
+from app.database import get_db
+from app.middleware.auth_guard import CurrentUser, get_current_user, require_roles
+from app.schemas.vehicle import VehicleAssignRequest, VehicleCreate, VehicleOut, VehicleUpdate
+from app.services.vehicle_service import VehicleService
 from app.models.vehicle import VehicleStatus
 
 router = APIRouter(prefix="/vehicles", tags=["vehicles"])
@@ -10,14 +13,14 @@ router = APIRouter(prefix="/vehicles", tags=["vehicles"])
 def create_vehicle(
     payload: VehicleCreate,
     db: Session = Depends(get_db),
-    user: CurrentUser = Depends(require_roles()),
+    user: CurrentUser = Depends(require_roles("manager")),
 ):
     service = VehicleService(db)
     return service.create(payload.model_dump(), user.id, user.role)
 
 @router.get("")
 def list_vehicles(
-    search: str | None = Query(default=none, description="Matches registration, make, model"),
+    search: str | None = Query(default=None, description="Matches registration, make, model"),
     status_filter: VehicleStatus | None = Query(default=None, alias="status"),
     skip: int = Query(default=0, ge=0),
     limit: int = Query(default=50, ge=1, le=200),
@@ -25,10 +28,10 @@ def list_vehicles(
     user: CurrentUser = Depends(get_current_user),
 
 ):
-    service = VehicleSerice(db)
+    service = VehicleService(db)
     items, total = service.list(search=search, status_filter=status_filter, skip=skip, limit=limit)
     return{
-        "items": [Vehicle.model_validate(v) for v in items],
+        "items": [VehicleOut.model_validate(v) for v in items],
         "total": total,
         "skip": skip,
         "limit": limit,
