@@ -49,6 +49,13 @@ def update_vehicle(
     payload: VehicleUpdate,
     db: Session = Depends(get_db),
     user: CurrentUser = Depends(require_roles("manager")),
+):
+    service = VehicleService(db)
+    return service.update(vehicle_id, payload.model_dump(exclude_unset=True), user.id, user.role)
+
+@router.delete("/{vehicle_id}", status_code=204)
+def delete_vehicle(
+    
 )
     
     
