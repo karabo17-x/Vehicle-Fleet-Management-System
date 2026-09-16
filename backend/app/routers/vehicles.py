@@ -55,7 +55,11 @@ def update_vehicle(
 
 @router.delete("/{vehicle_id}", status_code=204)
 def delete_vehicle(
-    
-)
+    vehicle_id: int,
+    db: Session = Depends(get_db),
+    user: CurrentUser = Depends(require_roles("manager")),
+
+):
+    VehicleService(db).delete(vehicle_id, user.id, user.role)
     
     
