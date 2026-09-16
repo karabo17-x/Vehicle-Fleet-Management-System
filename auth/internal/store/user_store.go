@@ -17,7 +17,7 @@ var ErrAlreadyExists = errors.New("store: user already exists")
 type User struct {
 	ID	string
 	Email	string
-	PasswordHash	string
+	PasswordHash	string 
 	Role	string
 	FullName	string
 }
