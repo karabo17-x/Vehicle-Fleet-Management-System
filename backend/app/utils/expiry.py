@@ -17,3 +17,14 @@ def is_expiring_soon(expiry_date: date, days_threshold: int = 30, today: Optiona
     (including if it has already expired).
     """
     return days_until_expiry(expiry_date, today) <= days_threshold
+
+def get_expiry_status(expiry_date: date, warning_days: int = 30, today: Optional[date] = None) -> str:
+    """
+    Returns one of: "Expired", "Expiring soon",or Active
+    """
+    remaining = days_until_expiry(expiry_date, today)
+    if remaining < 0:
+        return "Expired"
+    if remaining <= warning_days:
+        return "Expiring soon"
+    return "Active"
