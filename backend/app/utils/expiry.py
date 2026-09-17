@@ -28,3 +28,15 @@ def get_expiry_status(expiry_date: date, warning_days: int = 30, today: Optional
     if remaining <= warning_days:
         return "Expiring soon"
     return "Active"
+
+def format_expiry_message(item_name: str, expiry_date: date, warning_days: int = 30, today: Optional[date] = None) -> str:
+    """
+    Returns a friendly, human-readable message about an item's expiry.
+    e.g. "License expires in 5 days" or "License expired 3 days ago"
+    """
+    remaining = days_until_expiry(expiry_date, today)
+    if remaining < 0:
+        return f"{item_name} expired {abs(remaining)} day{'s' if abs(remaining) != 1 else ''} ago"
+    if remaining <= warning_days:
+        return f"{item_name} expires in {remaining} day{'s' if remaining != 1 else ''}"
+    return f"{item_name} is valid"
