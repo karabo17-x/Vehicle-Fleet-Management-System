@@ -27,7 +27,7 @@ func main() {
 		if err := users.SeedDemoUsers(); err!= nil{
 			log.Fatalf("auth: failed to seed demo users: %v", err)
 		}
-		log.Println("auth: seeded demo users(admin@vfms.local / manager@vfms.local / staff@vfms.local)")
+		log.Println("auth: seeded demo users(admin@vfms.com / manager@vfms.com / staff@vfms.com)")
 	}
 
 	deps := handlers.Deps{
@@ -48,6 +48,7 @@ func main() {
 
 	srv := &http.Server{
 		Addr:	":" + cfg.Port,
+		Handler: mux,
 		ReadTimeout:	5 * time.Second,
 		WriteTimeout:	5 * time.Second,
 		IdleTimeout:	60 * time.Second,
