@@ -61,7 +61,7 @@ func Verify(tokenString string, pub *rsa.PublicKey)(*Claims, error){
 	}
 
 	signingInput := parts[0] + "." + parts[1]
-	sig, err := base64.RawStdEncoding.DecodeString(parts[2])
+	sig, err := base64.RawURLEncoding.DecodeString(parts[2])
 	if err != nil{
 		return nil, ErrMalformed
 	}
@@ -80,7 +80,8 @@ func Verify(tokenString string, pub *rsa.PublicKey)(*Claims, error){
 	if err := json.Unmarshal(payloadBytes, &claims); err != nil{
 		return nil, ErrMalformed
 	}
-	if time.Now().Unix() > claims.ExpiresAt{
+	now := time.Now().UTC().Unix()
+	if now > claims.ExpiresAt{
 		return nil, ErrExpired
 	}
 	return &claims, nil
