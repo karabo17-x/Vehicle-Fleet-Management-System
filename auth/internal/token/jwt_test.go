@@ -22,7 +22,7 @@ func TestSignAndVerifyRoundTrip(t *testing.T) {
 
 	claims := Claims{
 		Subject: "usr-0001",
-		Email: "admin@vfms.local",
+		Email: "admin@vfms.com",
 		Role: "admin",
 		TokenType: "access",
 		Issuer: "vfms-auth",
@@ -73,5 +73,38 @@ func TestVerifyRejectsTamperedSignature(t *testing.T){
 		t.Errorf("expected ErrBadSignature when verifying with the wrong public key, got %v", err)
 
 
+	}
+}
+
+func TestIssuedAtAndExpiryUseUTCNow(t *testing.T) {
+	before := time.Now().UTC()
+	claims := Claims{
+		Subject:   "usr-0001",
+		Email:     "admin@vfms.com",
+		Role:      "admin",
+		TokenType: "access",
+		Issuer:    "vfms-auth",
+		IssuedAt:  before.Unix(),
+		ExpiresAt: before.Add(15 * time.Minute).Unix(),
+	}
+	priv := testKeyPair(t)
+
+	signed, err := Sign(claims, priv)
+	if err != nil {
+		t.Fatalf("sign returned error: %v", err)
+	}
+
+	got, err := Verify(signed, &priv.PublicKey)
+	if err != nil {
+		t.Fatalf("verify returned error: %v", err)
+	}
+
+	if got.IssuedAt != claims.IssuedAt || got.ExpiresAt != claims.ExpiresAt {
+		t.Fatalf("unexpected claims after verify: got %+v want %+v", got, claims)
+	}
+
+	after := time.Now().UTC()
+	if got.ExpiresAt < before.Add(14*time.Minute).Unix() || got.ExpiresAt > after.Add(15*time.Minute).Unix() {
+		t.Fatalf("expiry was not created from the same current UTC window: got exp=%d before=%d after=%d", got.ExpiresAt, before.Unix(), after.Unix())
 	}
 }
