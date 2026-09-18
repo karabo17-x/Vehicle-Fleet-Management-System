@@ -108,9 +108,9 @@ func(s *UserStore) SeedDemoUsers() error{
 	seeds := []struct {
 		email, pass, role, name string
 	}{
-		{"admin@vfms.local", "Admin@12345", "admin", "Fleet Administrator"},
-		{"manager@vfms.local", "Manager@12345", "manager", "Fleet Manager"},
-		{"staff@vfms.local", "Staff@12345", "staff", "Fleet Staff"},
+		{"admin@vfms.com", "Admin@12345", "admin", "Fleet Administrator"},
+		{"manager@vfms.com", "Manager@12345", "manager", "Fleet Manager"},
+		{"staff@vfms.com", "Staff@12345", "staff", "Fleet Staff"},
 	}
 	for _, u := range seeds{
 		if _, err := s.Create(u.email, u.pass, u.role, u.name); err != nil && !errors.Is(err, ErrAlreadyExists){
