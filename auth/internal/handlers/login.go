@@ -87,7 +87,7 @@ func Login(d Deps) http.HandlerFunc {
 }
 
 func issueTokenPair(d Deps, userID, email, role string)(accessToken, refreshToken string, err error){
-	now := time.Now()
+	now := time.Now().UTC()
 
 	access := token.Claims{
 		Subject: userID,
