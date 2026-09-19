@@ -3,7 +3,7 @@
 auth/keys/
 auth/auth
 
-
+.vscode 
 # Env
 .env
 *.pem
