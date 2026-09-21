@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 from app.models.driver import DriverStatus
 
@@ -26,6 +26,10 @@ class DriverUpdate(BaseModel):
     )
     last_name: Optional[str] = Field(
         None, min_length=1, max_length=20
+    )
+
+    license_number: Optional[str] = Field(
+        None, min_length=2, max_length=30
     )
     license_expiry: Optional[datetime] = None
     phone: Optional[str] = Field(None, max_length=20)
