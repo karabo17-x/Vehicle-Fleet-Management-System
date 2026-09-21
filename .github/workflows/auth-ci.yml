@@ -11,6 +11,11 @@ on:
     paths:
       - 'auth/**'
       - '.github/workflows/auth-ci.yml'
+      
+permissions:
+  contents: read
+
+
 
 jobs:
   auth-test:
