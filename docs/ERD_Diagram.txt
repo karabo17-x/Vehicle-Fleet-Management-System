@@ -1,0 +1,58 @@
+============================================
+VEHICLE FLEET MANAGEMENT SYSTEM
+ENTITY RELATIONSHIP DIAGRAM (ERD)
+============================================
+
++------------------+     +------------------+
+|     VEHICLES     |     |     DRIVERS      |
++------------------+     +------------------+
+| vehicleID (PK)   |     | driverID (PK)    |
+| reg_Number       |     | first_name       |
+| model            |     | last_name        |
+| year             |     | licence_number   |
+| status           |     | licence_expiry   |
+| insurance_expiry |     | phone_number     |
+| roadworthy_expiry|     | email            |
+| created_at       |     | created_at       |
++------------------+     +------------------+
+	|                            |
+	| 1                          | 1
+	|                            |
+	|                            |
+	|                            |
+	| *                          | *
+	|                            |
++------+----------+       +---------+----------+
+|   ASSIGNMENTS   |       |   EXPIRY_ALERTS    |
++-----------------+       +---------------------+
+| assignmentID(PK) |       | alertID (PK)        |
+| vehicleID (FK)   |-------| vehicleID (FK)      |
+| driverID (FK)    |-------| driverID (FK)       |
+| assigned_date    |       | alert_type          |
+| unassigned_date  |       | expiry_date         |
++------------------+       | is_notified         |
+	|                    +---------------------+
+	|
+	| 1
+	|
+	|
+	| Many
++------+----------+
+| MAINTENANCE_LOGS |
++------------------+
+| maintenanceID(PK)|
+| vehicleID (FK)   |
+| service_date     |
+| cost             |
+| description      |
+| service_type     |
++------------------+
+
+============================================
+RELATIONSHIPS:
+- vehicles 1---* assignments (One vehicle can have many assignments)
+- drivers  1---* assignments (One driver can have many assignments)
+- vehicles 1---* maintenance_logs (One vehicle can have many maintenance logs)
+- vehicles 1---* expiry_alerts (One vehicle can have many expiry alerts)
+- drivers  1---* expiry_alerts (One driver can have many expiry alerts)
+============================================

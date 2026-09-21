@@ -1,9 +1,6 @@
-# Go
-# Go
-auth/keys/
-auth/auth
-
-.vscode 
-# Env
 .env
-*.pem
+venv/
+__pycache__/
+*.pyc
+node_modules/
+.vscode/
