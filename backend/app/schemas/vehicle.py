@@ -10,17 +10,22 @@ class VehicleBase(BaseModel):
     registration_number: str = Field(..., min_length=1, max_length=20)
     make: str = Field(..., min_length=1, max_length=50)
     model: str = Field(..., min_length=1, max_length=50)
-    year: int
+    year: int = Field(..., ge=1950, le=2100)
     status: VehicleStatus = VehicleStatus.ACTIVE
     insurance_expiry: Optional[datetime] = None
     roadworthy_expiry: Optional[datetime] = None
 
 
 class VehicleCreate(VehicleBase):
+    
     pass
 
 
 class VehicleUpdate(BaseModel):
+    """All fields optional. Deliberately has NO `current_driver_id` field -- assignment
+    changes must go through POST /vehicles/{id}/assign and
+    /unassign, which enforce business rules and write assignment
+    history. Exposing it here would let a client bypass both."""
     registration_number: Optional[str] = Field(
         None, min_length=1, max_length=20
     )
