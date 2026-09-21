@@ -13,7 +13,12 @@ class MaintenanceBase(BaseModel):
 
 
 class MaintenanceCreate(MaintenanceBase):
-    logged_by: Optional[str] = Field(None, max_length=50)
+    """`logged_by` is deliberately NOT a field it must be
+    derived server-side from the authenticated user's JWT subject
+    when the record is created, never taken from client input, or
+    the audit trail can be forged."""
+    pass
+    
 
 
 class MaintenanceUpdate(BaseModel):
