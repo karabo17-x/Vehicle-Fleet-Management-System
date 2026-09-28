@@ -1,5 +1,3 @@
-<<<<<<< Updated upstream
-=======
 // Route guard for pages that require a signed-in user.
 //
 // Call requireAuth() at the top of any protected page's <name>.page.js.
@@ -15,4 +13,3 @@ export function requireAuth(redirectTo = '/index.html') {
   }
   return true;
 }
->>>>>>> Stashed changes

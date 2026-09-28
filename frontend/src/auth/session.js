@@ -1,5 +1,3 @@
-<<<<<<< Updated upstream
-=======
 // Auth layer for VFMS.
 //
 // Matches the SDD (section 2.6 / 4.2): a separate Go service owns
@@ -155,4 +153,3 @@ export function logout() {
   clearSession();
   window.location.href = '/index.html';
 }
->>>>>>> Stashed changes
