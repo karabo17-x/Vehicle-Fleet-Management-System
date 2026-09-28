@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VFMS — Dashboard</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/src/styles/main.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <h1>Dashboard</h1>
+      <p id="welcome"></p>
+      <div class="placeholder-note">
+        This page is a placeholder so the login → redirect flow has
+        somewhere to land. Build out the real dashboard (vehicle counts,
+        expiry warning cards, quick actions) here per SDD section 7.2.
+      </div>
+      <button id="logout-btn" type="button">Sign out</button>
+    </div>
+
+    <script type="module" src="/src/pages/dashboard.page.js"></script>
+  </body>
+</html>
