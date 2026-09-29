@@ -1,15 +1,14 @@
+#Pydantic schemas for maintenance records (Feature 4)
 from datetime import datetime
-from typing import Optional
-
 from pydantic import BaseModel, ConfigDict, Field
 
 
 class MaintenanceBase(BaseModel):
-    vehicle_id: int = Field(..., gt=0)
+    vehicle_id: int
     service_date: datetime
     description: str = Field(..., min_length=1)
     cost: float = Field(..., ge=0)
-    service_provider: Optional[str] = Field(None, max_length=100)
+    service_provider: str | None = None
 
 
 class MaintenanceCreate(MaintenanceBase):
@@ -20,17 +19,9 @@ class MaintenanceCreate(MaintenanceBase):
     pass
     
 
-
-class MaintenanceUpdate(BaseModel):
-    service_date: Optional[datetime] = None
-    description: Optional[str] = Field(None, min_length=1)
-    cost: Optional[float] = Field(None, ge=0)
-    service_provider: Optional[str] = Field(None, max_length=100)
-
-
 class MaintenanceOut(MaintenanceBase):
-    id: int
-    logged_by: Optional[str] = None
-    created_at: datetime
-
     model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    logged_by: str
+    created_at: datetime
