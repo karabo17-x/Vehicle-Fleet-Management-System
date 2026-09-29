@@ -1,0 +1,236 @@
+/* VFMS main.css
+   One shared stylesheet. Fleet look: navy header, blue actions, amber warnings.
+   To restyle the whole app, change the variables in :root. */
+
+:root {
+  --navy: #0f2a43;
+  --navy-light: #1c3f5f;
+  --accent: #2563eb;
+  --accent-dark: #1d4ed8;
+  --amber: #f59e0b;
+  --danger: #dc2626;
+  --success: #16a34a;
+  --warning: #d97706;
+  --bg: #eef2f6;
+  --surface: #ffffff;
+  --text: #1e293b;
+  --muted: #64748b;
+  --border: #dbe2ea;
+  --radius: 8px;
+  --space: 16px;
+  --shadow: 0 1px 3px rgba(15, 42, 67, 0.08), 0 1px 2px rgba(15, 42, 67, 0.06);
+  --font: "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: var(--font);
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--text);
+  background: var(--bg);
+}
+
+h1, h2, h3 { margin: 0 0 var(--space); line-height: 1.25; color: var(--navy); }
+h1 { font-size: 1.6rem; }
+h2 { font-size: 1.25rem; }
+h3 { font-size: 1.05rem; }
+
+a { color: var(--accent); }
+
+/* ---------- Layout ---------- */
+
+#app { min-height: 100vh; }
+
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space);
+  padding: 0 var(--space);
+  min-height: 56px;
+  background: var(--navy);
+  color: #fff;
+  border-bottom: 3px solid var(--amber);
+}
+
+.topbar strong, .topbar .brand { font-size: 1.1rem; letter-spacing: 0.3px; }
+
+.topbar nav { display: flex; flex-wrap: wrap; gap: 4px; flex: 1; }
+
+.topbar nav a {
+  color: #cbd5e1;
+  text-decoration: none;
+  padding: 8px 12px;
+  border-radius: var(--radius);
+  transition: background 0.15s, color 0.15s;
+}
+
+.topbar nav a:hover { background: var(--navy-light); color: #fff; }
+.topbar nav a.active { background: var(--navy-light); color: #fff; box-shadow: inset 0 -2px 0 var(--amber); }
+
+.topbar .badge { background: var(--navy-light); color: #fff; border-color: var(--navy-light); }
+.topbar button { background: transparent; border-color: #64748b; }
+.topbar button:hover { background: var(--navy-light); }
+
+.content { max-width: 1150px; margin: 0 auto; padding: 24px var(--space); }
+
+.hidden { display: none !important; }
+
+/* ---------- Cards, text, badges ---------- */
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: var(--space);
+  box-shadow: var(--shadow);
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: var(--space);
+  margin-bottom: var(--space);
+}
+
+/* Dashboard summary cards */
+.card-grid .card {
+  margin-bottom: 0;
+  border-left: 4px solid var(--accent);
+}
+.card-grid .card:nth-child(2n) { border-left-color: var(--amber); }
+.card-grid .card:nth-child(3n) { border-left-color: var(--success); }
+.card-grid .card:nth-child(4n) { border-left-color: var(--navy-light); }
+
+.stat { font-size: 2rem; font-weight: 700; color: var(--navy); line-height: 1.1; }
+
+.muted { color: var(--muted); font-size: 0.9em; }
+.danger { color: var(--danger); }
+.success { color: var(--success); }
+
+.badge {
+  display: inline-block;
+  padding: 2px 10px;
+  font-size: 0.8em;
+  font-weight: 600;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+}
+.badge.success { color: #166534; background: #dcfce7; border-color: #bbf7d0; }
+.badge.warning { color: #92400e; background: #fef3c7; border-color: #fde68a; }
+.badge.danger  { color: #991b1b; background: #fee2e2; border-color: #fecaca; }
+
+/* ---------- Forms ---------- */
+
+label { display: block; margin-bottom: 4px; font-weight: 600; font-size: 0.88em; color: var(--navy); }
+
+input, select, textarea {
+  width: 100%;
+  padding: 9px 12px;
+  font: inherit;
+  color: inherit;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+button:focus-visible, a:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+
+.form-row { margin-bottom: var(--space); }
+
+.inline-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
+  margin-bottom: var(--space);
+}
+.inline-form > * { flex: 1 1 160px; width: auto; }
+.inline-form button { flex: 0 0 auto; }
+
+/* ---------- Buttons ---------- */
+
+button {
+  padding: 9px 16px;
+  font: inherit;
+  font-weight: 600;
+  color: #fff;
+  background: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+button:hover { background: var(--accent-dark); }
+button:disabled { opacity: 0.55; cursor: not-allowed; }
+
+button.secondary { color: var(--text); background: var(--surface); border-color: var(--border); }
+button.secondary:hover { background: var(--bg); }
+
+button.danger { color: #fff; background: var(--danger); border-color: var(--danger); }
+button.danger:hover { background: #b91c1c; }
+
+/* ---------- Tables ---------- */
+
+.table-wrap {
+  overflow-x: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+table { width: 100%; border-collapse: collapse; background: var(--surface); }
+
+th, td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--border); }
+
+th {
+  font-size: 0.8em;
+  font-weight: 700;
+  color: #fff;
+  background: var(--navy);
+  white-space: nowrap;
+}
+
+tbody tr:nth-child(even) { background: #f8fafc; }
+tbody tr:hover { background: #e8f0fe; }
+tbody tr:last-child td { border-bottom: none; }
+
+/* ---------- Messages and states ---------- */
+
+.message {
+  padding: 10px 14px;
+  margin-bottom: var(--space);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.message.error   { color: #991b1b; background: #fef2f2; border-color: #fecaca; border-left-color: var(--danger); }
+.message.success { color: #166534; background: #f0fdf4; border-color: #bbf7d0; border-left-color: var(--success); }
+.message.warning { color: #92400e; background: #fffbeb; border-color: #fde68a; border-left-color: var(--amber); }
+
+.loading, .empty { padding: 24px var(--space); text-align: center; color: var(--muted); }
+
+/* ---------- Login page ---------- */
+
+.login-card { max-width: 380px; margin: 10vh auto 0; border-top: 4px solid var(--amber); }
+
+/* ---------- Small screens ---------- */
+
+@media (max-width: 600px) {
+  .topbar { flex-wrap: wrap; padding: 8px 12px; }
+  .content { padding: 12px; }
+  th, td { padding: 10px; }
+}
