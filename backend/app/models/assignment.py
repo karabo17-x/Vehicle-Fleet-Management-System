@@ -1,19 +1,19 @@
 #driver assigned to vehicle, keep history of assignments
 
-from datetime import datetime 
-from sqlalchemy import Datetime, ForeignKey, Integer, func, String
+from datetime import datetime
+from sqlalchemy import DateTime, ForeignKey, Integer, func, String
 from sqlalchemy.orm import Mapped, relationship, mapped_column
 from app.database import Base
 
 class Assignment(Base):
     __tablename__ = "assignments"
 
-    id: Mapped[int] = mapped_column(Integer, primary_Key=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
     vehicle_id: Mapped[int] = mapped_column(ForeignKey("vehicles.id"), nullable=False, index=True)
     driver_id: Mapped[int] = mapped_column(ForeignKey("drivers.id"), nullable=False, index=True)
 
-    assigned_at: Mapped[datetime] = mapped_column(Datetime, server_default=func.now())
-    unassigned_at: Mapped[datetime|None] = mapped_column(Datetime, nullable=True)
+    assigned_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+    unassigned_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
 
     #user id from auth service, to track who assigned/unassigned 
     assigned_by: Mapped[str] = mapped_column(String(50), nullable=True)

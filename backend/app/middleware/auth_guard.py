@@ -24,34 +24,43 @@ def _load_public_key() -> str:
 
 class CurrentUser:
     "represents authentication for duration request, decoded out of verified JWT"
-    def __init__(self, sub, str, email: str, roles: str):
+    def __init__(self, sub: str, email: str, role: str):
         self.id = sub
         self.email = email
-        self.role = self.role
+        self.role = role
 
-    def __repr__(self) -> str: #debugging aid
-        return f"CurrentUser(id={self,id!r}, role={self.role!r})"
+    def __repr__(self) -> str:  # debugging aid
+        return f"CurrentUser(id={self.id!r}, role={self.role!r})"
+
 
 def get_current_user(request: Request) -> CurrentUser:
     "fastapi: extracts and verifies the Bear token"
     auth_header = request.headers.get("Authorization", "")
-    if not auth_header.startswith("Bear "):
+    if not auth_header or " " not in auth_header:
         raise HTTPException(
             status.HTTP_401_UNAUTHORIZED,
             "Missing or malformed Authorization header",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    token_str = auth_header.removeprefix("Bearer ")
+
+    scheme, _, token = auth_header.partition(" ")
+    if scheme.lower() != "bearer" or not token:
+        raise HTTPException(
+            status.HTTP_401_UNAUTHORIZED,
+            "Missing or malformed Authorization header",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    token_str = token
 
     try:
         public_key = _load_public_key()
         payload = jwt.decode(
             token_str,
             public_key,
-            algorithms=[settings.jwt_algoithm],
+            algorithms=[settings.jwt_algorithm],
             issuer=settings.jwt_issuer,
             options={"require_exp": True, "require_sub": True},
-        )  
+        )
     except JWTError as exc:
         raise HTTPException(
             status.HTTP_401_UNAUTHORIZED,
@@ -60,7 +69,7 @@ def get_current_user(request: Request) -> CurrentUser:
         ) from exc
     if payload.get("token_type") != "access":
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Not access token")
-    return  CurrentUser(sub=payload["sub"], email=payload.get("email", ""), role=payload.get("role", ""))
+    return CurrentUser(sub=payload["sub"], email=payload.get("email", ""), role=payload.get("role", ""))
 
 def require_roles(*allowed_roles: str):
     " use `Depends(require_roles(admin, manager ))` on any route "

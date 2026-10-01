@@ -35,9 +35,9 @@ app.include_router(reports.router, prefix=settings.api_prefix)
 def on_startup() -> None:
     logger.info("Starting %s (%s environment)", settings.app_name, settings.environment)
 
-    @app.get("/health", tags=["health"])
-    def health_check():
-        #checks container/orchestrator monitoring and for frontend to confirm API is reachable 
-        return {"status": "ok", "service": settings.app_name}
-    
+
+@app.get("/health", tags=["health"])
+def health_check():
+    # checks container/orchestrator monitoring and for frontend to confirm API is reachable
+    return {"status": "ok", "service": settings.app_name}
 

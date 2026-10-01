@@ -37,7 +37,7 @@ class VehicleOut(VehicleBase):
     created_at: datetime
     updated_at: datetime
 
-class VehicleAssignRewquest(BaseModel):
-    driver_id: int     
+class VehicleAssignRequest(BaseModel):
+    driver_id: int
 
 

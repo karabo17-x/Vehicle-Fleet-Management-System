@@ -6,7 +6,8 @@ from sqlalchemy.orm import Mapped, Session, mapped_column
 from app.database import Base
 
 class AuditLog(Base):
-    
+    __tablename__ = "audit_logs"
+
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     actor_id: Mapped[str] = mapped_column(String(50), nullable=False)
     actor_role: Mapped[str] = mapped_column(String(20), nullable=False)

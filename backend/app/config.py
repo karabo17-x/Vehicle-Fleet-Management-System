@@ -28,12 +28,15 @@ class Settings(BaseSettings):
     #within this many days of expiring
     expiry_warnings_days: int = 30
 
-    @lru_cache
-    def get_settings() -> Settings:
-        #settings are cached so we parse the environment once per process, not on every request
-        return Settings()
 
-    settings = get_settings()
+
+@lru_cache
+def get_settings() -> Settings:
+    # settings are cached so we parse the environment once per process, not on every request
+    return Settings()
+
+
+settings = get_settings()
 
 
     
