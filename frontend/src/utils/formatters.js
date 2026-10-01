@@ -1,6 +1,4 @@
-// src/utils/formatters.js
-// Small display helpers only.
-// No network calls, no DOM access, no auth logic.
+
 
 const LOCALE = 'en-ZA';
 const CURRENCY = 'ZAR';
