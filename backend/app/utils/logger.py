@@ -21,6 +21,7 @@ def _configure_root_logger() -> None:
     root.addHandler(handler)
     _CONFIGURED = True
 
-    def get_logger(name: str) -> logging.Logger:
-        _configure_root_logger()
-        return logging.getLogger(name)
+
+def get_logger(name: str) -> logging.Logger:
+    _configure_root_logger()
+    return logging.getLogger(name)

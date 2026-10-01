@@ -11,7 +11,7 @@ from app.services.driver_service import DriverService
 router = APIRouter(prefix="/drivers", tags=["drivers"])
 
 def _serialize(driver, user: CurrentUser):
-    if user.role in ("admin", "manger"):
+    if user.role in ("admin", "manager"):
         return DriverOut.model_validate(driver)
     return DriverPublicOut.model_validate(driver)
 
@@ -19,7 +19,7 @@ def _serialize(driver, user: CurrentUser):
 def create_driver(
     payload: DriverCreate,
     db: Session = Depends(get_db),
-    user: CurrentUser = Depends(require_roles("mamager")),
+    user: CurrentUser = Depends(require_roles("manager")),
 ):
     return DriverService(db).create(payload.model_dump(), user.id, user.role)
 

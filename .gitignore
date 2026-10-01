@@ -1,9 +1,23 @@
 # Go
-# Go
 auth/keys/
 auth/auth
 
-.vscode 
+# VS Code
+.vscode/
+
+# Python
+**/.venv/
+**/__pycache__/
+**/.pytest_cache/
+**/.mypy_cache/
+*.py[cod]
+
+# Test and local runtime artifacts
+.coverage
+htmlcov/
+
 # Env
 .env
+.env.*
+!.env.example
 *.pem

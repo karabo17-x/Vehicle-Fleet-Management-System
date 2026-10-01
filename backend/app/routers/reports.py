@@ -11,7 +11,7 @@ from app.models.driver import Driver
 from app.models.vehicle import Vehicle, VehicleStatus
 from app.database import get_db
 
-router = APIRouter(prefix="reports", tags=["reports"])
+router = APIRouter(prefix="/reports", tags=["reports"])
 
 @router.get("/summary")
 def fleet_summary(
