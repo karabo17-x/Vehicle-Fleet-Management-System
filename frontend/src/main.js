@@ -1,8 +1,10 @@
 
+
 import './styles/main.css';
 
 import { isAuthenticated, getRole, logout } from './auth/session.js';
 import { requireAuth } from './auth/authGuard.js';
+
 
 import { render as renderLogin } from './pages/login.page.js';
 import { render as renderDashboard } from './pages/dashboard.page.js';
@@ -13,6 +15,7 @@ import { render as renderMaintenance } from './pages/maintenance.page.js';
 /* ---------- Routes table ---------- */
 
 const routes = {
+  
   '#/login': { render: renderLogin },
   '#/dashboard': { render: renderDashboard, guard: () => requireAuth() },
   '#/vehicles': { render: renderVehicles, guard: () => requireAuth() },
@@ -21,33 +24,50 @@ const routes = {
 };
 
 const NAV_LINKS = [
-  { hash: '#/dashboard', label: 'Dashboard' },
-  { hash: '#/vehicles', label: 'Vehicles' },
-  { hash: '#/drivers', label: 'Drivers' },
-  { hash: '#/maintenance', label: 'Maintenance' },
+  { hash: '#/dashboard', label: 'Overview', abbr: 'OV' },
+  { hash: '#/vehicles', label: 'Vehicles', abbr: 'VH' },
+  { hash: '#/drivers', label: 'Drivers', abbr: 'DR' },
+  { hash: '#/maintenance', label: 'Maintenance', abbr: 'SV' },
 ];
 
 /* ---------- Shell (top bar + content area) ---------- */
 
 const app = document.querySelector('#app');
+let shell;
 let topbar;
 let nav;
 let roleBadge;
 let content;
 
 function buildShell() {
-  topbar = document.createElement('header');
-  topbar.className = 'topbar';
+  shell = document.createElement('div');
+  shell.className = 'app-shell';
 
-  const brand = document.createElement('strong');
-  brand.className = 'brand';
-  brand.textContent = 'VFMS';
+  // Sidebar (kept in the variable `topbar` so the rest of the file stays the same)
+  topbar = document.createElement('aside');
+  topbar.className = 'sidebar';
+
+  const brand = document.createElement('div');
+  brand.className = 'lf-brand';
+  const logo = document.createElement('span');
+  logo.className = 'lf-logo';
+  logo.textContent = 'F';
+  const name = document.createElement('strong');
+  name.textContent = 'Fleetline';
+  brand.append(logo, name);
+
+  const label = document.createElement('p');
+  label.className = 'side-label';
+  label.textContent = 'WORKSPACE';
 
   nav = document.createElement('nav');
+  nav.className = 'side-nav';
   NAV_LINKS.forEach((link) => {
     const a = document.createElement('a');
     a.href = link.hash;
-    a.textContent = link.label;
+    const abbr = document.createElement('b');
+    abbr.textContent = link.abbr;
+    a.append(abbr, link.label);
     nav.append(a);
   });
 
@@ -56,21 +76,28 @@ function buildShell() {
 
   const logoutButton = document.createElement('button');
   logoutButton.type = 'button';
+  logoutButton.className = 'secondary';
   logoutButton.textContent = 'Log out';
   logoutButton.addEventListener('click', handleLogout);
 
-  topbar.append(brand, nav, roleBadge, logoutButton);
+  const footer = document.createElement('div');
+  footer.className = 'side-footer';
+  footer.append(roleBadge, logoutButton);
+
+  topbar.append(brand, label, nav, footer);
 
   content = document.createElement('main');
   content.className = 'content';
 
-  app.replaceChildren(topbar, content);
+  shell.append(topbar, content);
+  app.replaceChildren(shell);
 }
 
 /** Show the top bar only when logged in, and mark the current link. */
 function updateShell(currentHash) {
   const loggedIn = isAuthenticated();
   topbar.classList.toggle('hidden', !loggedIn);
+  shell.classList.toggle('no-sidebar', !loggedIn);
   roleBadge.textContent = getRole() || '';
 
   nav.querySelectorAll('a').forEach((a) => {
@@ -125,7 +152,7 @@ async function handleRoute() {
   }
 }
 
-/* ---------- Service worker  ---------- */
+/* ---------- Service worker (no-op for now) ---------- */
 
 function registerServiceWorker() {
   if (!('serviceWorker' in navigator)) return;
