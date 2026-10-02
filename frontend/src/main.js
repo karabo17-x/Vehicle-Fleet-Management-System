@@ -1,11 +1,13 @@
-
+// src/main.js
+// Composition root and router.
+// To add a screen: add one entry to `routes` and one file under pages/.
 
 import './styles/main.css';
 
 import { isAuthenticated, getRole, logout } from './auth/session.js';
 import { requireAuth } from './auth/authGuard.js';
 
-
+import { render as renderHome } from './pages/home.page.js';
 import { render as renderLogin } from './pages/login.page.js';
 import { render as renderDashboard } from './pages/dashboard.page.js';
 import { render as renderVehicles } from './pages/vehicles.page.js';
@@ -15,7 +17,7 @@ import { render as renderMaintenance } from './pages/maintenance.page.js';
 /* ---------- Routes table ---------- */
 
 const routes = {
-  
+  '#/home': { render: renderHome },
   '#/login': { render: renderLogin },
   '#/dashboard': { render: renderDashboard, guard: () => requireAuth() },
   '#/vehicles': { render: renderVehicles, guard: () => requireAuth() },
@@ -96,8 +98,10 @@ function buildShell() {
 /** Show the top bar only when logged in, and mark the current link. */
 function updateShell(currentHash) {
   const loggedIn = isAuthenticated();
-  topbar.classList.toggle('hidden', !loggedIn);
-  shell.classList.toggle('no-sidebar', !loggedIn);
+  const landing = currentHash === '#/home';
+  topbar.classList.toggle('hidden', !loggedIn || landing);
+  shell.classList.toggle('no-sidebar', !loggedIn || landing);
+  content.classList.toggle('content-landing', landing);
   roleBadge.textContent = getRole() || '';
 
   nav.querySelectorAll('a').forEach((a) => {
@@ -124,7 +128,7 @@ async function handleRoute() {
 
   // No hash yet: send people to the right start page
   if (!hash) {
-    window.location.hash = isAuthenticated() ? '#/dashboard' : '#/login';
+    window.location.hash = isAuthenticated() ? '#/dashboard' : '#/home';
     return;
   }
 
