@@ -16,15 +16,19 @@ CREATE TYPE driver_status  AS ENUM ('active', 'inactive', 'suspended');
 -- Mirrors backend/app/models/driver.py
 -- ============================================
 CREATE TABLE IF NOT EXISTS drivers (
-	id          SERIAL PRIMARY KEY,
-	first_name  VARCHAR(20)   NOT NULL,
-	last_name   VARCHAR(20)   NOT NULL,
-	phone       VARCHAR(15),
-	email       VARCHAR(30),
-	status      driver_status NOT NULL DEFAULT 'active',
-	created_at  TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	updated_at  TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP
+    id               SERIAL PRIMARY KEY,
+    first_name       VARCHAR(20)   NOT NULL,
+    last_name        VARCHAR(20)   NOT NULL,
+    license_number   VARCHAR(30)   NOT NULL UNIQUE,
+    license_expiry   TIMESTAMP     NOT NULL,
+    phone            VARCHAR(15),
+    email            VARCHAR(30),
+    status           driver_status NOT NULL DEFAULT 'active',
+    created_at       TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at       TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+CREATE INDEX IF NOT EXISTS idx_drivers_license_expiry
+    ON drivers(license_expiry);
 
 -- ============================================
 -- 2. VEHICLES
