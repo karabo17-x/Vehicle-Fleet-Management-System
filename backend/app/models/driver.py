@@ -15,6 +15,12 @@ class Driver(Base):
     first_name: Mapped[str] = mapped_column(String(20), nullable=False)
     last_name: Mapped[str] = mapped_column(String(20), nullable=False)
 
+    # License fields are part of the contract and must be present for the
+    # public driver output schemas; include them on the ORM so serialization
+    # and DDL match the contract.
+    license_number: Mapped[str] = mapped_column(String(30), nullable=False)
+    license_expiry: Mapped[datetime] = mapped_column(DateTime, nullable=False)
+
     phone: Mapped[str | None] = mapped_column(String(15), nullable=True)
     email: Mapped[str | None] = mapped_column(String(30), nullable=True)
     status: Mapped[DriverStatus] = mapped_column(Enum(DriverStatus), default=DriverStatus.ACTIVE, nullable=False)
