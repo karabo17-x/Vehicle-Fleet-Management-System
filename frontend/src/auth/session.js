@@ -9,7 +9,7 @@ const ACCESS_TOKEN_KEY = "vfms.access_token";
 const REFRESH_TOKEN_KEY = "vfms.refresh_token";
 const ROLE_KEY = "vfms.role";
 
-export function getACCESS_TOKEN(){
+export function getAccessToken(){
     return localStorage.getItem(ACCESS_TOKEN_KEY);
 }
 
