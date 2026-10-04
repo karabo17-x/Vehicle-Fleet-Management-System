@@ -106,3 +106,31 @@ vfms/
 ├── .gitignore
 ├── README.md
 └── CONTRIBUTING.md
+
+
+## Running with Docker (development)
+
+A docker-compose setup is provided to run a local Postgres instance plus the auth, backend and frontend services. It starts with an empty Postgres database and applies the authoritative schema in `backend/db/schema.sql` at first initialization.
+
+Quick start:
+
+1. Build and start everything:
+
+   docker compose up --build
+
+2. Services (default ports):
+   - Auth service: http://localhost:8081
+   - Backend API: http://localhost:8000 (API prefix /api/v1)
+   - Frontend dev server: http://localhost:5173
+
+3. The Postgres service runs with the following local dev credentials (set in docker-compose.yml):
+
+   - user: vfms_user
+   - password: vfms_pass
+   - database: vfms
+
+4. To create application users (manager/staff/admin) use the auth service's admin endpoints or the auth service UI/README (auth service runs at port 8081 in the compose setup).
+
+Notes:
+- The local SQLite database used for quick single-machine demos has been removed from the repository to avoid accidental seeded data. The docker-compose Postgres instance starts empty and applies the schema from `backend/db/schema.sql`.
+- Use your own production Postgres by setting DATABASE_URL in the backend service environment instead of the default in docker-compose.yml.
