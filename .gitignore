@@ -26,7 +26,7 @@ htmlcov/
 /vfms-contract.json
 /vfms-db-contract.json
 # Keep schema local; do not track in repo
-/backend/db/schema.sql
+
 # Ignore build artifacts and local DB
 /backend/vfms.db
 /frontend/dist/
