@@ -5,6 +5,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
+    database_url: str = "sqlite:///./vfms.db"
+
     #APP
     app_name: str = "VFMS Backend"
     environment: str = "development"
@@ -28,6 +30,10 @@ class Settings(BaseSettings):
     #within this many days of expiring
     expiry_warnings_days: int = 30
 
+    # Dev helper: when true the ORM will call `Base.metadata.create_all` on startup.
+    # Default is False to match the "no auto-seed" behavior used in the projectGuide-vfms
+    # repository; production deployments should use migrations instead.
+    create_tables_on_startup: bool = False
 
 
 @lru_cache
