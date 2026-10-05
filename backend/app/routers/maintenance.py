@@ -6,6 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
 from app.database import get_db
+from app.middleware.auth_guard import CurrentUser, get_current_user, require_roles
 from app.models.maintenance import MaintenanceRecord
 from app.schemas.maintenance import MaintenanceCreate, MaintenanceOut
 from app.services.vehicle_service import VehicleService
@@ -14,10 +15,12 @@ router = APIRouter(prefix="/maintenance", tags=["maintenance"])
 @router.post("", response_model=MaintenanceOut, status_code=201)
 def log_maintenance(
     payload: MaintenanceCreate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    user: CurrentUser = Depends(require_roles("manager", "staff")),
 ):
-    VehicleService(db).get_or_404(payload.model_dump()) # vehicle doesnt exist
-    record = MaintenanceRecord(**payload.model_dump())
+    VehicleService(db).get_or_404(payload.vehicle_id)
+    record = MaintenanceRecord(**payload.model_dump(), logged_by=user.id)
+    db.add(record)
     db.commit()
     db.refresh(record)
 
@@ -29,16 +32,14 @@ def list_maintenance(
     skip: int = Query(default=0, ge=0),
     limit: int = Query(default=50, ge=1, le=200),
     db: Session = Depends(get_db),
+    user: CurrentUser = Depends(get_current_user),
 
 ):
     query = db.query(MaintenanceRecord)
     if vehicle_id is not None:
         query = query.filter(MaintenanceRecord.vehicle_id == vehicle_id)
     total = query.count()
-    items = (
-        query.order_by(MaintenanceRecord.service_date)
-        
-    )
+    items = query.order_by(MaintenanceRecord.service_date.desc()).offset(skip).limit(limit).all()
     return{
         "items": [MaintenanceOut.model_validate(i) for i in items],
         "total": total,
@@ -50,6 +51,7 @@ def list_maintenance(
 def get_maintenance(
     record_id: int,
     db: Session = Depends(get_db),
+    user: CurrentUser = Depends(get_current_user),
 
 ):
     record = db.get(MaintenanceRecord, record_id)
@@ -61,6 +63,7 @@ def get_maintenance(
 def delete_maintenance(
     record_id: int,
     db: Session = Depends(get_db),
+    user: CurrentUser = Depends(require_roles("manager")),
 
 ):
     record = db.get(MaintenanceRecord, record_id)
@@ -72,4 +75,3 @@ def delete_maintenance(
     
 
     
-

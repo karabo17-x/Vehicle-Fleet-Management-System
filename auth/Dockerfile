@@ -1,19 +1,19 @@
  # --- build stage ---
-FROM golang:1.22-alphine AS build
+FROM golang:1.26.5-alpine AS build
 WORKDIR /src
 COPY go.mod ./
-RUN go mod download
+RUN GOTOOLCHAIN=auto go mod download
 COPY . .
-RUN CGO_ENABLED=0 GOOSlinux go build -o /out/auth ./cmd
+RUN CGO_ENABLED=0 GOOS=linux go build -o /out/auth ./cmd
 
 # --- run stage ---
-FROM alphine:3.19
+FROM alpine:3.19
 RUN adduser -D -H appuser
 WORKDIR /app
 COPY --from=build /out/auth ./auth
 
-# keys are genereated on first run and persisted via a mounted volume
-# restart dont invalidate every issue token.
+# keys are generated on first run and persisted via a mounted volume
+# restart does not invalidate every issued token.
 VOLUME ["/app/keys"]
 ENV JWT_PRIVATE_KEY_PATH=/app/keys/private.pem
 ENV JWT_PUBLIC_KEY_PATH=/app/keys/public.pem

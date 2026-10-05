@@ -29,7 +29,7 @@ class Settings(BaseSettings):
     # abstracts the SQL dialect away from the rest of the app, so
     # nothing outside this one setting needs to know or care which
     # database is actually running.
-    database_url: str = "******localhost:5432/vfms"
+    database_url: str = "postgresql://vfms_user:vfms_pass@localhost:5433/vfms"
     # For quick local hacking without Docker/Postgres installed, this
     # also works (see db/README.md for the trade-offs):
     #   DATABASE_URL=sqlite:///./vfms.db
@@ -40,7 +40,7 @@ class Settings(BaseSettings):
     # straight from the shared file both services mount; in a real
     # deployment AUTH_PUBLIC_KEY_URL would point at the auth service's
     # /.well-known/public-key.pem endpoint instead.
-    auth_public_key_path: str = "../auth/keys/public.pem"
+    auth_public_key_path: str = "../auth/internal/keys/public.pem"
     auth_public_key_url: str | None = None
     jwt_algorithm: str = "RS256"
     jwt_issuer: str = "vfms-auth"

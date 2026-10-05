@@ -12,18 +12,32 @@ const API_PREFIX = "/api/v1";
 // carries HTTP status
 export class ApiError extends Error {
     constructor(message, status) {
+        super(message);
         this.name = "ApiError";
         this.status = status;
+        this.message = message;
+        Object.setPrototypeOf(this, ApiError.prototype);
     }
 }
 
 async function parseErrorBody(response) {
+    const contentType = response.headers.get("content-type") || "";
     try {
-        const body = await response.json();
+        const body = contentType.includes("application/json")
+            ? await response.json()
+            : await response.text();
         // FastAPI HTTPException(detail=...) shows up as {"detail": "..."}
-        return body.detail || body.error || `Request failed(${response.status})`;
+        if (typeof body === "string") {
+            const text = body.trim();
+            return text ? `${text.slice(0, 300)} (HTTP ${response.status})` : `Request failed (${response.status})`;
+        }
+        const detail = body.detail || body.error;
+        if (Array.isArray(detail)) {
+            return detail.map((issue) => `${(issue.loc || []).join(".")}: ${issue.msg}`).join("; ");
+        }
+        return detail || `Request failed (${response.status})`;
     } catch {
-        return `Request failed(${response.status})`;
+        return `Request failed (${response.status})`;
     }
 }
 

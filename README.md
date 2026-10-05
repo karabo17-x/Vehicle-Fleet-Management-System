@@ -120,8 +120,10 @@ Quick start:
 
 2. Services (default ports):
    - Auth service: http://localhost:8081
-   - Backend API: http://localhost:8000 (API prefix /api/v1)
+   - Backend API: http://localhost:8001 (API prefix /api/v1; the compose file uses 8001 to avoid local port conflicts)
    - Frontend dev server: http://localhost:5173
+
+   - Postgres: localhost:5433 (mapped from container port 5432 to avoid collisions with locally-running Postgres instances)
 
 3. The Postgres service runs with the following local dev credentials (set in docker-compose.yml):
 

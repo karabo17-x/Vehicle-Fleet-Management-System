@@ -9,16 +9,46 @@ const ACCESS_TOKEN_KEY = "vfms.access_token";
 const REFRESH_TOKEN_KEY = "vfms.refresh_token";
 const ROLE_KEY = "vfms.role";
 
+function readStorageValue(key) {
+    try {
+        return sessionStorage.getItem(key) ?? localStorage.getItem(key);
+    } catch {
+        return localStorage.getItem(key);
+    }
+}
+
+function writeStorageValue(key, value) {
+    try {
+        sessionStorage.setItem(key, value);
+    } catch {
+        // ignore storage errors in private browsing / locked down browser modes
+    }
+    try {
+        localStorage.setItem(key, value);
+    } catch {
+        // ignore storage errors in private browsing / locked down browser modes
+    }
+}
+
+function clearStorageValue(key) {
+    try {
+        sessionStorage.removeItem(key);
+    } catch {}
+    try {
+        localStorage.removeItem(key);
+    } catch {}
+}
+
 export function getAccessToken(){
-    return localStorage.getItem(ACCESS_TOKEN_KEY);
+    return readStorageValue(ACCESS_TOKEN_KEY);
 }
 
 export function getRefreshToken(){
-    return localStorage.getItem(REFRESH_TOKEN_KEY);
+    return readStorageValue(REFRESH_TOKEN_KEY);
 }
 
 export function getRole(){
-    return localStorage.getItem(ROLE_KEY);
+    return readStorageValue(ROLE_KEY);
 }
 
 export function isAuthenticated(){
@@ -26,9 +56,9 @@ export function isAuthenticated(){
 }
 
 function storeTokenPair(payload){
-    localStorage.setItem(ACCESS_TOKEN_KEY, payload.access_token);
-    localStorage.setItem(REFRESH_TOKEN_KEY, payload.refresh_token);
-    localStorage.setItem(ROLE_KEY, payload.role);
+    writeStorageValue(ACCESS_TOKEN_KEY, payload.access_token);
+    writeStorageValue(REFRESH_TOKEN_KEY, payload.refresh_token);
+    writeStorageValue(ROLE_KEY, payload.role);
 }
 
 /**
@@ -112,8 +142,8 @@ export async function refreshSession(){
     return true;
 }
 export function logout(){
-    localStorage.removeItem(ACCESS_TOKEN_KEY);
-    localStorage.removeItem(REFRESH_TOKEN_KEY);
-    localStorage.removeItem(ROLE_KEY)
+    clearStorageValue(ACCESS_TOKEN_KEY);
+    clearStorageValue(REFRESH_TOKEN_KEY);
+    clearStorageValue(ROLE_KEY);
 }
 

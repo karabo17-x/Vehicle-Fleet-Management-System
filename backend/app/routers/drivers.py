@@ -1,6 +1,6 @@
 # driver endpoints - feature 2 CRUD
 #data confidentiality. RBAC + data-visbility
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, Response, status
 from sqlalchemy.orm import Session
 from app.database  import get_db
 from app.middleware.auth_guard import CurrentUser, get_current_user, require_roles
@@ -83,6 +83,38 @@ def list_drivers(
         "skip": skip,
         "limit": limit,
     }
+
+
+@router.get("/{driver_id}")
+def get_driver(
+    driver_id: int,
+    db: Session = Depends(get_db),
+    user: CurrentUser = Depends(get_current_user),
+):
+    return _serialize(DriverService(db).get_or_404(driver_id), user)
+
+
+@router.patch("/{driver_id}")
+def update_driver(
+    driver_id: int,
+    payload: DriverUpdate,
+    db: Session = Depends(get_db),
+    user: CurrentUser = Depends(require_roles("manager")),
+):
+    driver = DriverService(db).update(
+        driver_id, payload.model_dump(exclude_unset=True), user.id, user.role
+    )
+    return _serialize(driver, user)
+
+
+@router.delete("/{driver_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_driver(
+    driver_id: int,
+    db: Session = Depends(get_db),
+    user: CurrentUser = Depends(require_roles("manager")),
+):
+    DriverService(db).delete(driver_id, user.id, user.role)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 
