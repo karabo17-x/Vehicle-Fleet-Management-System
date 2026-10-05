@@ -20,4 +20,10 @@ htmlcov/
 .env
 .env.*
 !.env.example
-*.pem
+*.pem# Local/back-end helper scripts
+/backend/scripts/
+# Generated or authoritative contract files (do not commit)
+/vfms-contract.json
+/vfms-db-contract.json
+# Keep schema local; do not track in repo
+/backend/db/schema.sql

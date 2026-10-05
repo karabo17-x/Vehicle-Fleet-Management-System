@@ -7,7 +7,7 @@
 
 import { get, post } from './client.js';
 
-const BASE = '/api/drivers';
+const BASE = '/drivers';
 
 /** Build "?a=1&b=2" and skip empty values. */
 function toQuery(params) {

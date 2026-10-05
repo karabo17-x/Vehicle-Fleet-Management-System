@@ -1,7 +1,7 @@
 
 import { get, post, del } from './client.js';
 
-const BASE = '/api/maintenance';
+const BASE = '/maintenance';
 
 /** Build "?a=1&b=2" and skip empty values. */
 function toQuery(params) {

@@ -10,10 +10,54 @@ from app.services.driver_service import DriverService
 
 router = APIRouter(prefix="/drivers", tags=["drivers"])
 
+import logging
+from pydantic import ValidationError
+
+logger = logging.getLogger(__name__)
+
+
+def _to_dict(driver, include_sensitive: bool) -> dict:
+    # Build a plain dict from the ORM object to avoid pydantic-from-attributes
+    # pitfalls. Use getattr so missing attributes become None/empty rather than
+    # triggering attribute access issues on detached or partial instances.
+    base = {
+        "id": getattr(driver, "id", None),
+        "first_name": getattr(driver, "first_name", ""),
+        "last_name": getattr(driver, "last_name", ""),
+        "status": getattr(driver, "status", DriverStatus.ACTIVE),
+        "created_at": getattr(driver, "created_at", None),
+        "updated_at": getattr(driver, "updated_at", None),
+        "phone": getattr(driver, "phone", None),
+        "email": getattr(driver, "email", None),
+    }
+    if include_sensitive:
+        base.update({
+            "license_number": getattr(driver, "license_number", ""),
+            "license_expiry": getattr(driver, "license_expiry", None),
+        })
+    return base
+
+
 def _serialize(driver, user: CurrentUser):
-    if user.role in ("admin", "manager"):
-        return DriverOut.model_validate(driver)
-    return DriverPublicOut.model_validate(driver)
+    """Serialize a Driver ORM object according to caller role.
+
+    Convert ORM -> plain dict then validate with Pydantic model to avoid
+    attribute-access related ValidationErrors. If validation still fails,
+    return a conservative fallback dict to avoid 500s.
+    """
+    include_sensitive = user.role in ("admin", "manager")
+    payload = _to_dict(driver, include_sensitive)
+    try:
+        if include_sensitive:
+            return DriverOut.model_validate(payload)
+        return DriverPublicOut.model_validate(payload)
+    except ValidationError as exc:
+        logger.warning(
+            "Driver serialization (dict) failed for id=%s role=%s: %s",
+            payload.get("id"), user.role, exc,
+        )
+        # Return the plain payload as a best-effort JSON-friendly dict
+        return payload
 
 @router.post("", response_model=DriverOut, status_code=201)
 def create_driver(
