@@ -1,53 +1,55 @@
-version: '3.8'
-
+# Brings up the full backend: Postgres, the auth service, and the
+# FastAPI backend. The frontend team can run `npm run dev` separately
+# (Vite dev server) and point it at http://localhost:8000 (backend)
+# and http://localhost:8081 (auth).
 services:
   db:
-    image: postgres:15
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: vfms_user
-      POSTGRES_PASSWORD: vfms_pass
-      POSTGRES_DB: vfms
-    volumes:
-      - db-data:/var/lib/postgresql/data
-      - ./backend/db/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+    image: postgres:16-alpine
     ports:
       - "5432:5432"
+    environment:
+      - POSTGRES_USER=vfms_user
+      - POSTGRES_PASSWORD=vfms_pass
+      - POSTGRES_DB=vfms
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      # Runs automatically on first container start only (Postgres'
+      # official image executes every *.sql file in this directory
+      # exactly once, when the data directory is empty).
+      - ./backend/db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vfms_user -d vfms"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   auth:
     build: ./auth
-    restart: unless-stopped
     ports:
       - "8081:8081"
+    volumes:
+      - auth-keys:/app/keys
     environment:
-      - PORT=8081
+      - AUTH_PORT=8081
+      - SEED_DEMO_USERS=true
 
   backend:
     build: ./backend
-    restart: unless-stopped
-    depends_on:
-      - db
-      - auth
     ports:
       - "8000:8000"
-    environment:
-      DATABASE_URL: "postgresql://vfms_user:vfms_pass@db:5432/vfms"
-      AUTH_PUBLIC_KEY_URL: "http://auth:8081/.well-known/public-key.pem"
-      JWT_ISSUER: "auth"
     volumes:
-      - ./backend:/app:ro
-
-  frontend:
-    build: ./frontend
-    restart: unless-stopped
-    depends_on:
-      - backend
-      - auth
-    ports:
-      - "5173:5173"
+      - auth-keys:/auth-keys:ro
     environment:
-      - VITE_DEV_SERVER=true
+      - DATABASE_URL=******db:5432/vfms
+      - AUTH_PUBLIC_KEY_PATH=/auth-keys/public.pem
+      - JWT_ISSUER=vfms-auth
+      - CORS_ALLOW_ORIGINS=["http://localhost:5173"]
+    depends_on:
+      db:
+        condition: service_healthy
+      auth:
+        condition: service_started
 
 volumes:
+  auth-keys:
   db-data:
-    name: vfms_db_data

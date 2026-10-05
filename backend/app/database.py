@@ -1,3 +1,12 @@
+"""
+SQLAlchemy engine/session setup.
+
+Kept deliberately small: one engine, one sessionmaker, one Base, and a
+`get_db` FastAPI dependency that every router uses to obtain a request
+-scoped session. Repositories (see app/repositories/) receive this
+session rather than importing it globally, which is what makes them
+easy to unit test with an in-memory SQLite database.
+"""
 from collections.abc import Generator
 
 from sqlalchemy import create_engine
@@ -5,46 +14,37 @@ from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 
 from app.config import settings
 
+# check_same_thread=False is only needed for SQLite (FastAPI may use a
+# different thread per request); it's a no-op for other engines.
+connect_args = {"check_same_thread": False} if settings.database_url.startswith("sqlite") else {}
+
+engine = create_engine(settings.database_url, connect_args=connect_args)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
 
 class Base(DeclarativeBase):
-    pass
-
-
-def _build_engine():
-    database_url = settings.database_url or "sqlite:///./vfms.db"
-    engine_kwargs = {"future": True, "pool_pre_ping": True}
-    if database_url.startswith("sqlite"):
-        engine_kwargs["connect_args"] = {"check_same_thread": False}
-    return create_engine(database_url, **engine_kwargs)
-
-
-engine = _build_engine()
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine, future=True)
-
-# Import model modules so SQLAlchemy metadata is populated for migrations or optional creation.
-from app.models.assignment import Assignment  # noqa: F401,E402
-from app.models.driver import Driver  # noqa: F401,E402
-from app.models.maintenance import MaintenanceRecord  # noqa: F401,E402
-from app.models.vehicle import Vehicle  # noqa: F401,E402
-from app.services.audit_service import AuditLog  # noqa: F401,E402
-
-# Do NOT automatically create tables by default. Some teams prefer to manage
-# schema with migrations or with an explicit init step. The behaviour can be
-# enabled by setting the `create_tables_on_startup` setting to True (for
-# local/dev convenience) — this mirrors the "no auto-seed" approach of the
-# projectGuide-vfms repository.
-try:
-    from app.config import settings
-except Exception:
-    settings = None
-
-if settings and getattr(settings, "create_tables_on_startup", False):
-    Base.metadata.create_all(bind=engine)
+    """Shared declarative base for every ORM model in the app."""
 
 
 def get_db() -> Generator[Session, None, None]:
+    """FastAPI dependency yielding a request-scoped DB session, always
+    closed afterwards even if the request raises."""
     db = SessionLocal()
     try:
         yield db
     finally:
         db.close()
+
+
+def init_db() -> None:
+    """Create all tables that don't exist yet. Called once at startup
+    (see app/main.py). For the project's scope (a single-instance
+    dev/demo deployment) this replaces a full migrations tool; the
+    folder structure leaves room for Alembic migrations later if the
+    project grows past this."""
+    # Import models here (not at module load time) so every model is
+    # registered on Base.metadata before create_all runs.
+    from app.models import assignment, driver, maintenance, vehicle  # noqa: F401
+    from app.services import audit_service  # noqa: F401 (registers AuditLog)
+
+    Base.metadata.create_all(bind=engine)
