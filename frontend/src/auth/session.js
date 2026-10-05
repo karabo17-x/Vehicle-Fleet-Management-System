@@ -30,6 +30,27 @@ function storeTokenPair(payload){
     localStorage.setItem(REFRESH_TOKEN_KEY, payload.refresh_token);
     localStorage.setItem(ROLE_KEY, payload.role);
 }
+
+/**
+ * Fetch authoritative role from backend /me endpoint and store it locally.
+ * Returns true on success, false otherwise.
+ */
+export async function refreshRoleFromServer(){
+    const token = getAccessToken();
+    if(!token) return false;
+    try{
+        const resp = await fetch('/api/v1/me', {
+            method: 'GET',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if(!resp.ok) return false;
+        const body = await resp.json();
+        if(body.role) localStorage.setItem(ROLE_KEY, body.role);
+        return true;
+    }catch(e){
+        return false;
+    }
+}
 /**
  * logs in against Go auth service
  */
@@ -45,6 +66,23 @@ export async function login(email, password){
         const body = await response.json().catch(() => ({}));
         throw new Error(body.error || "Login failed. Check your email and password");
     }
+    const payload = await response.json();
+    storeTokenPair(payload);
+    return payload;
+}
+
+export async function register(fullName, email, password){
+    const response = await fetch("/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ full_name: fullName, email, password }),
+    });
+
+    if(!response.ok){
+        const body = await response.json().catch(() => ({}));
+        throw new Error(body.error || "Registration failed.");
+    }
+
     const payload = await response.json();
     storeTokenPair(payload);
     return payload;

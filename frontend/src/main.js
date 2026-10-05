@@ -172,4 +172,13 @@ function registerServiceWorker() {
 buildShell();
 window.addEventListener('hashchange', handleRoute);
 registerServiceWorker();
-handleRoute();
+
+// If we have an access token, refresh (authoritative) role from server
+import { refreshRoleFromServer } from './auth/session.js';
+
+(async function init(){
+  if(isAuthenticated()){
+    await refreshRoleFromServer();
+  }
+  handleRoute();
+})();
