@@ -20,4 +20,15 @@ htmlcov/
 .env
 .env.*
 !.env.example
-*.pem
+*.pem# Local/back-end helper scripts
+/backend/scripts/
+# Generated or authoritative contract files (do not commit)
+/vfms-contract.json
+/vfms-db-contract.json
+# Keep schema local; do not track in repo
+
+# Ignore build artifacts and local DB
+/backend/vfms.db
+/frontend/dist/
+# Do not commit internal auth keys
+/auth/internal/keys/

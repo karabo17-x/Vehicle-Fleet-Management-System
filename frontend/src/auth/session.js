@@ -9,16 +9,46 @@ const ACCESS_TOKEN_KEY = "vfms.access_token";
 const REFRESH_TOKEN_KEY = "vfms.refresh_token";
 const ROLE_KEY = "vfms.role";
 
-export function getACCESS_TOKEN(){
-    return localStorage.getItem(ACCESS_TOKEN_KEY);
+function readStorageValue(key) {
+    try {
+        return sessionStorage.getItem(key) ?? localStorage.getItem(key);
+    } catch {
+        return localStorage.getItem(key);
+    }
+}
+
+function writeStorageValue(key, value) {
+    try {
+        sessionStorage.setItem(key, value);
+    } catch {
+        // ignore storage errors in private browsing / locked down browser modes
+    }
+    try {
+        localStorage.setItem(key, value);
+    } catch {
+        // ignore storage errors in private browsing / locked down browser modes
+    }
+}
+
+function clearStorageValue(key) {
+    try {
+        sessionStorage.removeItem(key);
+    } catch {}
+    try {
+        localStorage.removeItem(key);
+    } catch {}
+}
+
+export function getAccessToken(){
+    return readStorageValue(ACCESS_TOKEN_KEY);
 }
 
 export function getRefreshToken(){
-    return localStorage.getItem(REFRESH_TOKEN_KEY);
+    return readStorageValue(REFRESH_TOKEN_KEY);
 }
 
 export function getRole(){
-    return localStorage.getItem(ROLE_KEY);
+    return readStorageValue(ROLE_KEY);
 }
 
 export function isAuthenticated(){
@@ -26,9 +56,30 @@ export function isAuthenticated(){
 }
 
 function storeTokenPair(payload){
-    localStorage.setItem(ACCESS_TOKEN_KEY, payload.access_token);
-    localStorage.setItem(REFRESH_TOKEN_KEY, payload.refresh_token);
-    localStorage.setItem(ROLE_KEY, payload.role);
+    writeStorageValue(ACCESS_TOKEN_KEY, payload.access_token);
+    writeStorageValue(REFRESH_TOKEN_KEY, payload.refresh_token);
+    writeStorageValue(ROLE_KEY, payload.role);
+}
+
+/**
+ * Fetch authoritative role from backend /me endpoint and store it locally.
+ * Returns true on success, false otherwise.
+ */
+export async function refreshRoleFromServer(){
+    const token = getAccessToken();
+    if(!token) return false;
+    try{
+        const resp = await fetch('/api/v1/me', {
+            method: 'GET',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if(!resp.ok) return false;
+        const body = await resp.json();
+        if(body.role) localStorage.setItem(ROLE_KEY, body.role);
+        return true;
+    }catch(e){
+        return false;
+    }
 }
 /**
  * logs in against Go auth service
@@ -45,6 +96,23 @@ export async function login(email, password){
         const body = await response.json().catch(() => ({}));
         throw new Error(body.error || "Login failed. Check your email and password");
     }
+    const payload = await response.json();
+    storeTokenPair(payload);
+    return payload;
+}
+
+export async function register(fullName, email, password){
+    const response = await fetch("/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ full_name: fullName, email, password }),
+    });
+
+    if(!response.ok){
+        const body = await response.json().catch(() => ({}));
+        throw new Error(body.error || "Registration failed.");
+    }
+
     const payload = await response.json();
     storeTokenPair(payload);
     return payload;
@@ -74,8 +142,8 @@ export async function refreshSession(){
     return true;
 }
 export function logout(){
-    localStorage.removeItem(ACCESS_TOKEN_KEY);
-    localStorage.removeItem(REFRESH_TOKEN_KEY);
-    localStorage.removeItem(ROLE_KEY)
+    clearStorageValue(ACCESS_TOKEN_KEY);
+    clearStorageValue(REFRESH_TOKEN_KEY);
+    clearStorageValue(ROLE_KEY);
 }
 

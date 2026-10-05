@@ -1,0 +1,57 @@
+# Brings up the full backend: Postgres, the auth service, and the
+# FastAPI backend. The frontend team can run `npm run dev` separately
+# (Vite dev server) and point it at http://localhost:8000 (backend)
+# and http://localhost:8081 (auth).
+services:
+  db:
+    image: postgres:16-alpine
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_USER=vfms_user
+      - POSTGRES_PASSWORD=vfms_pass
+      - POSTGRES_DB=vfms
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      # Runs automatically on first container start only (Postgres'
+      # official image executes every *.sql file in this directory
+      # exactly once, when the data directory is empty).
+      - ./backend/db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vfms_user -d vfms"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  auth:
+    build: ./auth
+    user: "0:0"
+    ports:
+      - "8081:8081"
+    volumes:
+      - auth-keys:/app/keys
+    environment:
+      - AUTH_PORT=8081
+      - JWT_ISSUER=vfms-auth
+      - SEED_DEMO_USERS=true
+
+  backend:
+    build: ./backend
+    ports:
+      - "8001:8000"
+    volumes:
+      - auth-keys:/auth-keys:ro
+    environment:
+      - DATABASE_URL=postgresql://vfms_user:vfms_pass@db:5432/vfms
+      - AUTH_PUBLIC_KEY_PATH=/auth-keys/public.pem
+      - JWT_ISSUER=vfms-auth
+      - CORS_ALLOW_ORIGINS=["http://localhost:5173"]
+    depends_on:
+      db:
+        condition: service_healthy
+      auth:
+        condition: service_started
+
+volumes:
+  auth-keys:
+  db-data:

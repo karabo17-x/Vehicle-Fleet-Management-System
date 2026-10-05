@@ -15,7 +15,7 @@ cd auth
 go mod tidy #downloads golang.org/x/crypto (bycrypt)
 go run ./cmd
 ```
-On first run it generates an RSA keypair under `./keys/` and seeds three demo accounts (disable with `SEED_DEMO_USERS=false`):
+On first run it generates an RSA keypair under `./internal/keys/` and seeds three demo accounts (disable with `SEED_DEMO_USERS=false`):
 
 | Email                | Password        | Role    |
 |-----------------------|-----------------|---------|
@@ -30,8 +30,8 @@ On first run it generates an RSA keypair under `./keys/` and seeds three demo ac
 | Variable          | Default           | Meaning                   |
 |-----------------------|-----------------------|---------------------|
 | `Auth_Port`           | `8081`                | HTTP Port          |
-| `JWT_PRIVATE_KEY_PATH`| `./keys/private.pem`  | RSA private key    |
-| `JWT_PUBLIC_KEY_PATH` | `./keys/public.pem`   | RSA public key     |
+| `JWT_PRIVATE_KEY_PATH`| `./internal/keys/private.pem`  | RSA private key    |
+| `JWT_PUBLIC_KEY_PATH` | `./internal/keys/public.pem`   | RSA public key     |
 | `ACCESS_TOKEN_TTL`    | `15m`                 | access token       |
 |  `REFRESH_TOKEN_TTL`  | `168h` (7 days)       | Refresh token      |
 | `JWT_ISSUER`           | `vfms-auth`          | `iss` claim value  |

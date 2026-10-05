@@ -18,7 +18,11 @@ class Vehicle(Base):
     make: Mapped[str] = mapped_column(String(50), nullable=False)
     model: Mapped[str] = mapped_column(String(50), nullable=False)
     year: Mapped[str] = mapped_column(Integer, nullable=False)
-    status: Mapped[VehicleStatus] = mapped_column(Enum(VehicleStatus), default=VehicleStatus.ACTIVE, nullable=False)
+    status: Mapped[VehicleStatus] = mapped_column(
+        Enum(VehicleStatus, values_callable=lambda enum: [item.value for item in enum]),
+        default=VehicleStatus.ACTIVE,
+        nullable=False,
+    )
 
     # document expiry feature6: expiry warnings
     insurance_expiry: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
@@ -33,4 +37,3 @@ class Vehicle(Base):
     current_driver = relationship("Driver", foreign_keys=[current_driver_id])
     assignments = relationship("Assignment", back_populates="vehicle", foreign_keys="Assignment.vehicle_id")
     maintenance_records = relationship("MaintenanceRecord", back_populates="vehicle")
-
