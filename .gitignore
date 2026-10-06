@@ -1,6 +1,7 @@
 # Go
 auth/keys/
 auth/auth
+auth/data/
 
 # VS Code
 .vscode/
