@@ -1,12 +1,14 @@
 // Route guard for pages that require a signed-in user.
-//
 // Call requireAuth() at the top of any protected page's <name>.page.js.
-// If there's no valid session, it redirects to the login screen and
-// returns false so the calling page can stop running its own setup code.
 
 import { isAuthenticated } from './session.js';
 
 export function requireAuth(redirectTo = '/index.html') {
+  // Dev-only preview: visit a page with ?demo while running `npm run dev`
+  // to see it without a backend running.
+  if (import.meta.env.DEV && new URLSearchParams(location.search).has('demo')) {
+    return true;
+  }
   if (!isAuthenticated()) {
     window.location.href = redirectTo;
     return false;

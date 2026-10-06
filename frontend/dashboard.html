@@ -11,15 +11,43 @@
     <link rel="stylesheet" href="/src/styles/main.css" />
   </head>
   <body>
-    <div class="shell">
-      <h1>Dashboard</h1>
-      <p id="welcome"></p>
-      <div class="placeholder-note">
-        This page is a placeholder so the login → redirect flow has
-        somewhere to land. Build out the real dashboard (vehicle counts,
-        expiry warning cards, quick actions) here per SDD section 7.2.
-      </div>
-      <button id="logout-btn" type="button">Sign out</button>
+    <div class="app">
+      <aside class="sidebar">
+        <div class="brand-mark">VFMS<span>.</span></div>
+        <nav>
+          <a class="active" href="/dashboard.html">Dashboard</a>
+          <a href="/vehicles.html">Vehicles</a>
+          <a href="/drivers.html">Drivers</a>
+          <a href="#">Assignments</a>
+          <a href="/maintenance.html">Maintenance</a>
+          <a href="#">Reports</a>
+        </nav>
+        <button id="logout-btn" type="button">Sign out</button>
+      </aside>
+
+      <main class="content">
+        <h1>Dashboard</h1>
+        <p id="welcome" class="muted"></p>
+        <div id="notice" class="notice" role="status" hidden></div>
+
+        <section class="stats" aria-label="Fleet summary">
+          <div class="stat"><b id="stat-total">–</b><span>Total vehicles</span></div>
+          <div class="stat"><b id="stat-active">–</b><span>Active</span></div>
+          <div class="stat"><b id="stat-maint">–</b><span>In maintenance</span></div>
+          <div class="stat"><b id="stat-drivers">–</b><span>Drivers</span></div>
+        </section>
+
+        <section class="panel">
+          <h2>Expiry warnings</h2>
+          <ul id="warnings" class="warnings"></ul>
+        </section>
+
+        <section class="actions">
+          <a class="action-btn" href="/vehicles.html">Add vehicle</a>
+          <a class="action-btn" href="/drivers.html">Add driver</a>
+          <a class="action-btn" href="/maintenance.html">Log maintenance</a>
+        </section>
+      </main>
     </div>
 
     <script type="module" src="/src/pages/dashboard.page.js"></script>

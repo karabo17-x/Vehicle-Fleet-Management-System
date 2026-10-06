@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VFMS — Vehicles</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/src/styles/main.css" />
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar">
+        <div class="brand-mark">VFMS<span>.</span></div>
+        <nav>
+          <a href="/dashboard.html">Dashboard</a>
+          <a class="active" href="/vehicles.html">Vehicles</a>
+          <a href="/drivers.html">Drivers</a>
+          <a href="#">Assignments</a>
+          <a href="/maintenance.html">Maintenance</a>
+          <a href="#">Reports</a>
+        </nav>
+        <button id="logout-btn" type="button">Sign out</button>
+      </aside>
+
+      <main class="content">
+        <div class="page-header">
+          <h1>Vehicles</h1>
+          <button class="btn btn-primary" id="add-btn">Add vehicle</button>
+        </div>
+        <p id="notice" class="notice" role="status" hidden></p>
+
+        <div class="filter-bar">
+          <input id="search" type="search" placeholder="Search by registration number…" />
+          <select id="status-filter">
+            <option value="">All statuses</option>
+            <option value="Active">Active</option>
+            <option value="In Maintenance">In Maintenance</option>
+            <option value="Inactive">Inactive</option>
+          </select>
+        </div>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Registration</th>
+              <th>Make / Model</th>
+              <th>Year</th>
+              <th>Status</th>
+              <th>Insurance expiry</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="rows">
+            <tr class="loading-row"><td colspan="6">Loading…</td></tr>
+          </tbody>
+        </table>
+      </main>
+    </div>
+
+    <dialog class="form-dialog" id="vehicle-dialog">
+      <form class="dialog-inner" id="vehicle-form" method="dialog">
+        <h2 id="dialog-title">Add vehicle</h2>
+        <input type="hidden" id="v-id" />
+        <div class="field">
+          <label for="v-registration">Registration number *</label>
+          <input id="v-registration" required />
+        </div>
+        <div class="field">
+          <label for="v-make">Make *</label>
+          <input id="v-make" required />
+        </div>
+        <div class="field">
+          <label for="v-model">Model *</label>
+          <input id="v-model" required />
+        </div>
+        <div class="field">
+          <label for="v-year">Year *</label>
+          <input id="v-year" type="number" min="1980" max="2100" required />
+        </div>
+        <div class="field">
+          <label for="v-status">Status *</label>
+          <select id="v-status" required>
+            <option value="Active">Active</option>
+            <option value="In Maintenance">In Maintenance</option>
+            <option value="Inactive">Inactive</option>
+          </select>
+        </div>
+        <div class="dialog-actions">
+          <button type="button" class="btn btn-ghost" id="cancel-btn">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="save-btn">Save</button>
+        </div>
+      </form>
+    </dialog>
+
+    <script type="module" src="/src/pages/vehicles.page.js"></script>
+  </body>
+</html>

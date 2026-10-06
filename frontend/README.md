@@ -1,86 +1,76 @@
 # VFMS Frontend
 
 Vite + vanilla JavaScript frontend for the Vehicle Fleet Management System
-(CMPG224, Team 10), matching the stack and screens in the SDD (section 4.2, 7).
+(CMPG224, Team 10).
 
 ## Setup
-
 ```bash
 npm install
-cp .env.example .env   # defaults are fine if you use the dev proxy below
+cp .env.example .env
 npm run dev
 ```
-
-Opens on `http://localhost:5173`. The dev server proxies:
-
-- `/api/*` → your FastAPI backend at `http://localhost:8000`
-- `/auth/*` → the Go auth service at `http://localhost:8080`
-
-Change the proxy targets in `vite.config.js` once you know the real ports/URLs,
-or point `VITE_API_BASE_URL` / `VITE_AUTH_BASE_URL` in `.env` straight at
-deployed URLs for production builds.
+Dev server proxies `/api` to the FastAPI backend (localhost:8000) and
+`/auth` to the Go auth service (localhost:8080). Change targets in
+`vite.config.js` once real URLs are known.
 
 ## Structure
-
 ```
-index.html            Login screen (site root)
-dashboard.html         Placeholder post-login screen (route guard demo)
+index.html             Login screen
+dashboard.html          Dashboard (stats + expiry warnings)
 src/
-  api/
-    client.js          apiFetch() wrapper for the FastAPI backend — attaches
-                        the JWT, retries once after a silent refresh on 401
-  auth/
-    session.js          Talks to the Go auth service; owns token storage
-    authGuard.js         requireAuth() — call at the top of any protected
-                        page's <name>.page.js to redirect signed-out users
-  pages/
-    login.page.js        Login form logic (validation, loading state, errors)
-    dashboard.page.js     Dashboard placeholder logic
-  styles/
-    main.css              All shared design tokens + page styles
+  api/client.js          apiFetch() — attaches JWT, retries once after silent refresh on 401
+  api/vehicles.api.js      Vehicle endpoints
+  api/drivers.api.js       Driver endpoints
+  auth/session.js          Token storage + login/refresh/logout
+  auth/authGuard.js         requireAuth() route guard
+  pages/login.page.js       Login form logic
+  pages/dashboard.page.js    Dashboard logic
+  utils/formatters.js       Date/expiry helpers
+  styles/main.css           All design tokens + page styles
 ```
 
-Named to match the team's planned `frontend/` layout in the repo README
-(`*.page.js`, `auth/session.js` + `auth/authGuard.js`, one `main.css`). Add
-new screens as `src/pages/<name>.page.js` + a matching `<name>.html`, and
-list the new HTML file under `build.rollupOptions.input` in `vite.config.js`.
+## Dashboard preview without a backend
+Visit `/dashboard.html?demo` while running `npm run dev` to see the
+dashboard with sample data, bypassing the login requirement. This only
+works in dev mode — production builds strip it out.
 
-Note: the team's README structure implies a single-page app (one `main.js`
-entry, no separate `.html` per screen). This project is still multi-page
-(separate `index.html` / `dashboard.html`) for simplicity — worth raising
-with your team so everyone builds screens the same way once more people
-start adding pages.
+## Known simplification
+Tokens live in sessionStorage because this is a multi-page app (separate
+HTML documents), not an SPA — in-memory tokens would be lost on navigation.
 
-## Auth flow (how it maps to the SDD)
+## What's built so far
 
-1. `login.page.js` posts `{ username, password }` to `POST /auth/login`.
-2. `session.js` stores the returned `access_token` / `refresh_token` in
-   `sessionStorage` (cleared when the tab closes) and decodes the JWT payload
-   to read `role` and `exp` — no signature verification happens client-side,
-   the backend verifies it against the Go service's public key per SDD 2.6.
-3. Every other API call should go through `apiFetch()` in `client.js`, which
-   attaches `Authorization: Bearer <token>` automatically. If a call comes
-   back `401` (expired token), it silently calls `/auth/refresh` once and
-   retries; if that also fails, it clears the session and sends the user
-   back to `index.html`.
-4. `dashboard.html` shows the route-guard pattern to copy for other pages:
-   check `isAuthenticated()` on load, redirect to `/index.html` if false.
+- **Login** (`index.html`) — auth against the Go service, token storage
+- **Dashboard** (`dashboard.html`) — vehicle/driver counts, expiry warnings
+- **Vehicles** (`vehicles.html`) — list, search/filter by status, add, edit,
+  delete (with confirm), client-side duplicate-registration check
+- **Drivers** (`drivers.html`) — same pattern, plus role-based hiding: when
+  the signed-in user's role is `staff`, the licence-number column/field and
+  the delete button are hidden. The server should still be the real
+  enforcement (`DriverPublicOut` vs `DriverOut`) — this is a client-side
+  convenience on top of that, not a substitute for it.
+- **Maintenance** (`maintenance.html`) — log a service record, filter history
+  by vehicle, delete
 
-### Known simplification
+Every list page falls back to small sample datasets (shown with a visible
+"can't reach the backend" notice) when the API calls fail, so each page is
+demoable before the backend endpoints are live. Add `?demo` to any page's
+URL while running `npm run dev` to force this, e.g.
+`localhost:5173/vehicles.html?demo`.
 
-Tokens live in `sessionStorage` rather than the more secure
-in-memory-access-token + httpOnly-cookie-refresh-token split, because this is
-a multi-page app (separate HTML documents) rather than an SPA, so in-memory
-state doesn't survive navigation. This is a reasonable tradeoff for the
-project's scope — flag it in your security section (NFR03/NFR04) as a known
-limitation rather than pretending it isn't there.
+Shared logic across the three list pages lives in `src/utils/ui.js`
+(toast messages, delete confirmation, button loading state) — implements the
+usability rules in SDD section 7.1.
 
-## Next screens to build (per SDD 7.2–7.3)
+## Still to build
 
-- Vehicles list / detail / add-vehicle form
-- Drivers list / detail (remember: staff role should never receive
-  `license_number` — that's enforced server-side via `DriverPublicOut`, but
-  the UI should also not assume it will always be present in the response)
-- Assignments flow
-- Maintenance log
-- Dashboard: vehicle/driver counts + expiry warning cards
+- **Assignments** page (assign a driver to a vehicle, view assignment
+  history) — SDD section 2.4 says this happens via `PUT /drivers/{id}`
+  (reassigning a driver's vehicle), so this is likely a dedicated page or a
+  field added to the driver edit form, rather than a new API module
+- **Reports** page (fleet summary, FR33)
+- Real automated UI tests (the SDD's traceability matrix lists specific
+  ones, e.g. "UI test form submit", "UI test badge states")
+- Wiring up real backend data once FastAPI endpoints exist — check that
+  field names here (`registration_number`, `license_number`, etc.) match
+  what the backend actually returns; adjust the `.api.js` files if not

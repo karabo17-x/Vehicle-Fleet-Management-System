@@ -1,8 +1,5 @@
 import { login, AuthError, isAuthenticated } from '../auth/session.js';
 
-// If someone already has a valid session and lands on the login page
-// directly, skip straight to the dashboard instead of asking them to sign
-// in again.
 if (isAuthenticated()) {
   window.location.href = '/dashboard.html';
 }
