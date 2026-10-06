@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VFMS — Reports</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/src/styles/main.css" />
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar">
+        <div class="brand-mark">VFMS<span>.</span></div>
+        <nav>
+          <a href="/dashboard.html">Dashboard</a>
+          <a href="/vehicles.html">Vehicles</a>
+          <a href="/drivers.html">Drivers</a>
+          <a href="/assignments.html">Assignments</a>
+          <a href="/maintenance.html">Maintenance</a>
+          <a class="active" href="/reports.html">Reports</a>
+        </nav>
+        <button id="logout-btn" type="button">Sign out</button>
+      </aside>
+
+      <main class="content">
+        <h1>Reports</h1>
+        <p id="notice" class="notice" role="status" hidden></p>
+
+        <section class="stats" aria-label="Fleet summary">
+          <div class="stat"><b id="stat-vehicles">–</b><span>Total vehicles</span></div>
+          <div class="stat"><b id="stat-drivers">–</b><span>Total drivers</span></div>
+          <div class="stat"><b id="stat-records">–</b><span>Maintenance records</span></div>
+          <div class="stat"><b id="stat-cost">–</b><span>Total maintenance cost</span></div>
+        </section>
+
+        <section class="panel">
+          <h2>Vehicles by status</h2>
+          <table class="data-table">
+            <thead><tr><th>Status</th><th>Count</th></tr></thead>
+            <tbody id="status-rows"></tbody>
+          </table>
+        </section>
+
+        <section class="panel" style="margin-top: 16px;">
+          <h2>Maintenance cost by vehicle</h2>
+          <table class="data-table">
+            <thead><tr><th>Vehicle</th><th>Records</th><th>Total cost</th></tr></thead>
+            <tbody id="cost-rows"></tbody>
+          </table>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="/src/pages/reports.page.js"></script>
+  </body>
+</html>

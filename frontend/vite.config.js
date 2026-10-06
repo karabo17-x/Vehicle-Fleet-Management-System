@@ -11,6 +11,8 @@ export default defineConfig({
         vehicles: resolve(__dirname, 'vehicles.html'),
         drivers: resolve(__dirname, 'drivers.html'),
         maintenance: resolve(__dirname, 'maintenance.html'),
+        assignments: resolve(__dirname, 'assignments.html'),
+        reports: resolve(__dirname, 'reports.html'),
       },
     },
   },

@@ -74,3 +74,22 @@ usability rules in SDD section 7.1.
 - Wiring up real backend data once FastAPI endpoints exist — check that
   field names here (`registration_number`, `license_number`, etc.) match
   what the backend actually returns; adjust the `.api.js` files if not
+
+## Assignments & Reports (added after the first round)
+
+- **Assignments** (`assignments.html`) — shows current driver↔vehicle
+  assignments, lets you assign an unassigned driver to an unassigned-by-them
+  vehicle, and unassign. **Important caveat:** the SDD has no dedicated
+  assignment endpoint — this assumes `PUT /drivers/{id}` accepts a
+  `vehicle_id` field (null to unassign). Confirm the real field name with
+  the backend team; it's isolated to two `updateDriver(...)` calls in
+  `assignments.page.js` if it needs changing. This page also only shows
+  the *current* state, not history — true history needs a backend endpoint
+  that doesn't exist yet (the SDD's `assignments` table with
+  assignedAt/unassignedAt isn't exposed by any listed route).
+- **Reports** (`reports.html`) — tries `GET /reports/summary` (FR33) first;
+  if that 404s or isn't built yet, it falls back to computing the same
+  totals client-side from the vehicles/drivers/maintenance list endpoints.
+  Shows vehicle counts by status and maintenance cost per vehicle.
+
+Both support the same `?demo` trick as the other pages.

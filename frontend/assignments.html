@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VFMS — Assignments</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/src/styles/main.css" />
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar">
+        <div class="brand-mark">VFMS<span>.</span></div>
+        <nav>
+          <a href="/dashboard.html">Dashboard</a>
+          <a href="/vehicles.html">Vehicles</a>
+          <a href="/drivers.html">Drivers</a>
+          <a class="active" href="/assignments.html">Assignments</a>
+          <a href="/maintenance.html">Maintenance</a>
+          <a href="/reports.html">Reports</a>
+        </nav>
+        <button id="logout-btn" type="button">Sign out</button>
+      </aside>
+
+      <main class="content">
+        <div class="page-header">
+          <h1>Assignments</h1>
+          <button class="btn btn-primary" id="add-btn">Assign driver</button>
+        </div>
+        <p id="notice" class="notice" role="status" hidden></p>
+
+        <section class="panel">
+          <h2>Current assignments</h2>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Vehicle</th>
+                <th>Driver</th>
+                <th>Assigned since</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="rows">
+              <tr class="loading-row"><td colspan="4">Loading…</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="panel" style="margin-top: 16px;">
+          <h2>Unassigned vehicles</h2>
+          <ul id="unassigned-list" class="warnings"></ul>
+        </section>
+
+        <p class="field-hint" style="margin-top: 16px;">
+          This page shows who's assigned right now. A full assignment
+          <em>history</em> (past assignments, not just current) needs a
+          backend endpoint that doesn't exist yet — check with the backend
+          team before relying on history here.
+        </p>
+      </main>
+    </div>
+
+    <dialog class="form-dialog" id="assign-dialog">
+      <form class="dialog-inner" id="assign-form" method="dialog">
+        <h2>Assign driver to vehicle</h2>
+        <div class="field">
+          <label for="a-vehicle">Vehicle *</label>
+          <select id="a-vehicle" required></select>
+        </div>
+        <div class="field">
+          <label for="a-driver">Driver *</label>
+          <select id="a-driver" required></select>
+        </div>
+        <div class="dialog-actions">
+          <button type="button" class="btn btn-ghost" id="cancel-btn">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="save-btn">Assign</button>
+        </div>
+      </form>
+    </dialog>
+
+    <script type="module" src="/src/pages/assignments.page.js"></script>
+  </body>
+</html>
