@@ -6,69 +6,81 @@ import (
 	"time"
 )
 
-//config holds auth service needed at startup
-type Config struct{
+// config holds auth service needed at startup
+type Config struct {
 	Port string
 	//RSA keypair used to sign/veify JWTs
 	PrivateKeyPath string
-	PublicKeyPath string
+	PublicKeyPath  string
 
 	//token time
-	AccessTokenTTL time.Duration
+	AccessTokenTTL  time.Duration
 	RefreshTokenTTL time.Duration
 
 	// token issuer embedded, backend API expected
 	Issuer string
 
 	//rate limit for login endpoint
-	RateLimitRequests int 
-	RateLimitWindow time.Duration
+	RateLimitRequests int
+	RateLimitWindow   time.Duration
 
 	SeedUsersEnabled bool
+	SMTPHost         string
+	SMTPPort         string
+	SMTPUsername     string
+	SMTPPassword     string
+	SMTPFrom         string
+	UserStorePath    string
 }
 
-func Load() Config{
+func Load() Config {
 	return Config{
 		Port:              getEnv("AUTH_PORT", "8081"),
-		PrivateKeyPath:  getEnv("JWT_PRIVATE_KEY_PATH", "./internal/keys/private.pem"),
-		PublicKeyPath:   getEnv("JWT_PUBLIC_KEY_PATH", "./internal/keys/public.pem"),
-		AccessTokenTTL:  getEnvDuration("ACCESS_TOKEN_TTL", 15*time.Minute),
-		RefreshTokenTTL: getEnvDuration("REFRESH_TOKEN_TTL",7*24*time.Hour),
+		PrivateKeyPath:    getEnv("JWT_PRIVATE_KEY_PATH", "./internal/keys/private.pem"),
+		PublicKeyPath:     getEnv("JWT_PUBLIC_KEY_PATH", "./internal/keys/public.pem"),
+		AccessTokenTTL:    getEnvDuration("ACCESS_TOKEN_TTL", 15*time.Minute),
+		RefreshTokenTTL:   getEnvDuration("REFRESH_TOKEN_TTL", 7*24*time.Hour),
 		Issuer:            getEnv("JWT_ISSUER", "vfms-auth"),
 		RateLimitRequests: getEnvInt("RATE_LIMIT_REQUESTS", 5),
 		RateLimitWindow:   getEnvDuration("RATE_LIMIT_WINDOW", time.Minute),
 		SeedUsersEnabled:  getEnvBool("SEED_DEMO_USERS", true),
+		SMTPHost:          getEnv("SMTP_HOST", ""),
+		SMTPPort:          getEnv("SMTP_PORT", "587"),
+		SMTPUsername:      getEnv("SMTP_USERNAME", ""),
+		SMTPPassword:      getEnv("SMTP_PASSWORD", ""),
+		SMTPFrom:          getEnv("SMTP_FROM", ""),
+		UserStorePath:     getEnv("AUTH_USER_STORE_PATH", "./data/users.json"),
 	}
 }
 
-func getEnv(key, fallback string) string{
-	if v := os.Getenv(key); v != ""{
+func getEnv(key, fallback string) string {
+	if v := os.Getenv(key); v != "" {
 		return v
 	}
 	return fallback
 }
 
-func getEnvInt(key string, fallback int) int{
-	if v := os.Getenv(key); v != ""{
-		if n, err := strconv.Atoi(v); err == nil{
+func getEnvInt(key string, fallback int) int {
+	if v := os.Getenv(key); v != "" {
+		if n, err := strconv.Atoi(v); err == nil {
 			return n
 		}
 	}
 	return fallback
 }
 
-func getEnvBool(key string, fallback bool) bool{
-	if v := os.Getenv(key); v != ""{
-		if b, err := strconv.ParseBool(v); err == nil{
+func getEnvBool(key string, fallback bool) bool {
+	if v := os.Getenv(key); v != "" {
+		if b, err := strconv.ParseBool(v); err == nil {
 			return b
 		}
 	}
 	return fallback
 }
 
-func getEnvDuration(key string, fallback time.Duration) time.Duration{
-	if v := os.Getenv(key); v != ""{
-		if d, err := time.ParseDuration(v); err == nil{
+func getEnvDuration(key string, fallback time.Duration) time.Duration {
+	if v := os.Getenv(key); v != "" {
+		if d, err := time.ParseDuration(v); err == nil {
 			return d
 		}
 	}
