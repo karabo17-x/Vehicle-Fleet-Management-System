@@ -84,7 +84,7 @@ The auth service seeds these development accounts by default:
 | Manager | `manager@vfms.com` | `Manager@12345` |
 | Staff | `staff@vfms.com` | `Staff@12345` |
 
-These accounts are for local development and demonstration only. Accounts and password changes are persisted in the auth service's `auth-data` volume. Provision real user accounts through the admin-only auth API; public self-registration is disabled.
+These accounts are for local development and demonstration only. The auth service currently stores users in memory, so only the seeded demo accounts are available again after an auth service restart.
 
 ## Data persistence
 
