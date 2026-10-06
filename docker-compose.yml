@@ -30,10 +30,16 @@ services:
       - "8081:8081"
     volumes:
       - auth-keys:/app/keys
+      - auth-data:/app/data
     environment:
       - AUTH_PORT=8081
       - JWT_ISSUER=vfms-auth
       - SEED_DEMO_USERS=true
+      - SMTP_HOST=${SMTP_HOST:-}
+      - SMTP_PORT=${SMTP_PORT:-587}
+      - SMTP_USERNAME=${SMTP_USERNAME:-}
+      - SMTP_PASSWORD=${SMTP_PASSWORD:-}
+      - SMTP_FROM=${SMTP_FROM:-}
 
   backend:
     build: ./backend
@@ -54,4 +60,5 @@ services:
 
 volumes:
   auth-keys:
+  auth-data:
   db-data:
