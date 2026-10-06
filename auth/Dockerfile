@@ -14,11 +14,11 @@ COPY --from=build /out/auth ./auth
 
 # keys are generated on first run and persisted via a mounted volume
 # restart does not invalidate every issued token.
-VOLUME ["/app/keys"]
+VOLUME ["/app/keys", "/app/data"]
 ENV JWT_PRIVATE_KEY_PATH=/app/keys/private.pem
 ENV JWT_PUBLIC_KEY_PATH=/app/keys/public.pem
+ENV AUTH_USER_STORE_PATH=/app/data/users.json
 ENV AUTH_PORT=8081
 USER appuser
 EXPOSE 8081
 ENTRYPOINT ["./auth"]
-
