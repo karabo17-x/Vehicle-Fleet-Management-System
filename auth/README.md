@@ -6,8 +6,6 @@ the identity/security microservice for the Vehicle Fleet Management System. it o
 - Issue short lived **access tokens** and longer-lived **refresh tokens**, signed with RS256 (this service holds the private key, everyone else only needs the public key to verify(asymmetric))
 - rotate acess tokens via `POST /refresh` without requiring the user to log in again
 - ratelimit login attempts to slow down credential guessing
-- issue one-time password recovery codes through a configured SMTP server
-- persist provisioned accounts and password changes in a private JSON data file
 - publish its public key at `GET /.well-known/public-key.pem` so other service can verify tokens **without calling back this serice on every requests**
 
 ## Running locally
@@ -40,12 +38,6 @@ On first run it generates an RSA keypair under `./internal/keys/` and seeds thre
 | `RATE_LIMIT_REQUESTS`  | `5`                  | Login attempts     |
 | `RATE_LIMIT_WINDOW`    | `1m`                 | Window for above   |
 | `SEED_DEMO_USERS`      | `true`               | Seed demo accounts | 
-| `AUTH_USER_STORE_PATH` | `./data/users.json`  | Persistent account store |
-| `SMTP_HOST`            | unset                | SMTP host for recovery email |
-| `SMTP_PORT`            | `587`                 | SMTP port (STARTTLS recommended) |
-| `SMTP_USERNAME`        | unset                | SMTP username |
-| `SMTP_PASSWORD`        | unset                | SMTP password/app password |
-| `SMTP_FROM`            | unset                | Authorized sender address |
 
 ## API
 
@@ -56,27 +48,9 @@ or full request/response examples.
 |--------|--------------------------------|----------------|-----------------------------------|
 | POST   | `/login`                       | no             | Exchange credentials for tokens  |
 | POST   | `/refresh`                     | no (needs refresh token in body) | Rotate access token |
-| POST   | `/users`                        | Admin bearer token | Provision an account |
-| POST   | `/forgot-password`              | no             | Send a recovery code to a registered email |
-| POST   | `/reset-password`               | no             | Verify code and update password |
 | GET    | `/authorize`                   | Bearer token   | Token introspection              |
 | GET    | `/.well-known/public-key.pem`  | no             | Fetch the public key for verification |
 | GET    | `/health`                      | no             | Liveness check                   |
-
-`POST /users` requires an admin access token and accepts `email`, `full_name`,
-`password`, and `role`. Passwords must be 12–128 characters for provisioned
-accounts. Public self-registration is not enabled.
-
-For recovery, `POST /forgot-password` accepts `{"email":"person@example.com"}`
-and returns a generic response to avoid revealing whether the account exists.
-If the account is registered and SMTP is configured, a six-digit code is emailed.
-It expires in 10 minutes and allows five attempts. Complete the process through
-`POST /reset-password` with `email`, `code`, and `new_password` (12–128
-characters). Recovery codes are memory-only and expire on an auth service restart.
-Account records and password changes persist in `AUTH_USER_STORE_PATH`.
-
-Copy the repository's `.env.example` to `.env` and set SMTP credentials for
-email delivery. Do not commit `.env` or share provider app passwords.
 
 ## Integration with the FastAPI backend
 
