@@ -4,31 +4,50 @@ export function render(container) {
       <header class="lf-top">
         <div class="lf-wrap lf-header">
           <div class="lf-brand">
-            <span class="lf-logo">F</span>
-            <span><strong>Fleetline</strong><small>FLEET OPERATIONS</small></span>
+            <img class="lf-logo lf-brand-image" src="/images/vehicle-mark.png" alt="" />
+            <span><strong>Vehicle Fleet</strong><small>MANAGEMENT SYSTEM</small></span>
           </div>
           <nav class="lf-nav">
-            <a href="#/home" data-scroll="lf-workspace">Workspace</a>
-            <a href="#/home" data-scroll="lf-manage">What you can manage</a>
+            <a href="#/home" data-scroll="lf-about">About</a>
+            <a href="#/home" data-scroll="lf-workspace">Fleet workspace</a>
+            <a href="#/home" data-scroll="lf-manage">Features</a>
           </nav>
-          <a class="lf-btn lf-right" href="#/login">Sign in</a>
+          <a class="lf-btn lf-right" href="#/login">Log in</a>
         </div>
       </header>
 
       <main class="lf-wrap">
         <section class="lf-hero">
-          <p class="lf-eyebrow"><i class="lf-dot"></i>VEHICLE FLEET MANAGEMENT</p>
-          <h1>Keep every vehicle<br>and driver <span>accounted for.</span></h1>
-          <p class="lf-sub">Track vehicle records, driver assignments, and service history in one place.</p>
-          <div class="lf-actions">
-            <a class="lf-btn" href="#/login">Sign in to continue</a>
-            <a class="lf-link" href="#/home" data-scroll="lf-workspace">See the workspace</a>
+          <div class="lf-hero-copy">
+            <p class="lf-eyebrow"><i class="lf-dot"></i>VEHICLE FLEET MANAGEMENT SYSTEM</p>
+            <h1>Every vehicle.<br>One clear <span>overview.</span></h1>
+            <p class="lf-sub">Manage cars, vans, and trucks with connected vehicle records, driver assignments, and maintenance history.</p>
+            <div class="lf-actions">
+              <a class="lf-btn" href="#/login">Open your workspace</a>
+              <a class="lf-link" href="#/home" data-scroll="lf-about">About the system</a>
+            </div>
+          </div>
+          <figure class="lf-hero-image">
+            <img src="/images/vehicle.jpg" alt="A fleet of trucks ready for operation" />
+            <figcaption><span>VEHICLE FLEET MANAGEMENT</span><strong>Records that keep work moving.</strong></figcaption>
+          </figure>
+        </section>
+
+        <section class="lf-about" id="lf-about">
+          <div class="lf-about-copy">
+            <p class="lf-eyebrow">ABOUT THE SYSTEM</p>
+            <h2>A practical workspace for managing your fleet.</h2>
+            <p>Vehicle Fleet Management System is a web application for teams responsible for company vehicles. It brings vehicle records, driver profiles and assignments, and maintenance logs together. Staff can add and update fleet information, review service costs, and keep upcoming maintenance visible across trucks, vans, and cars.</p>
+          </div>
+          <div class="lf-about-visual" aria-label="Vehicles managed by the system">
+            <img src="/images/AdobeStock_1305301275-scaled.jpeg" alt="Trucks in a fleet at dusk" />
+            <img src="/images/images.jpeg" alt="A lineup of fleet trucks" />
           </div>
         </section>
 
         <section class="lf-preview" id="lf-workspace">
           <aside class="lf-side">
-            <div class="lf-brand"><span class="lf-logo">F</span><strong>Fleetline</strong></div>
+            <div class="lf-brand"><img class="lf-logo lf-brand-image" src="/images/vehicle-mark.png" alt="" /><strong>Vehicle Fleet</strong></div>
             <p class="lf-label">WORKSPACE</p>
             <span class="lf-item active"><b>OV</b>Overview</span>
             <span class="lf-item"><b>VH</b>Vehicles</span>
@@ -53,25 +72,32 @@ export function render(container) {
             <div class="lf-lower">
               <div class="lf-map">
                 <p class="lf-label"><span>FLEET COVERAGE</span><em>Illustrative view</em></p>
-                <svg viewBox="0 0 420 150" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Illustrative route map">
-                  <rect width="420" height="150" fill="#f1f4f8"/>
-                  <g stroke="#e4e9ef" stroke-width="1">
-                    <path d="M0 30H420M0 60H420M0 90H420M0 120H420M60 0V150M120 0V150M180 0V150M240 0V150M300 0V150M360 0V150"/>
-                  </g>
-                  <g stroke="#dde3ea" stroke-width="12" stroke-linecap="round">
-                    <path d="M-10 20L110 150"/><path d="M110 -10L250 150"/><path d="M250 -10L420 130"/><path d="M-10 110L420 60" stroke-width="8"/>
-                  </g>
-                  <path d="M40 112C80 70 110 40 160 62S250 105 300 70S360 48 392 58" fill="none" stroke="#4f6d8f" stroke-width="3" stroke-dasharray="1 7" stroke-linecap="round"/>
-                  <circle cx="40" cy="112" r="6" fill="#fff" stroke="#16181d" stroke-width="3"/>
-                  <circle cx="160" cy="62" r="6" fill="#fff" stroke="#16181d" stroke-width="3"/>
-                  <circle cx="270" cy="92" r="6" fill="#fff" stroke="#4f6d8f" stroke-width="3"/>
-                  <circle cx="392" cy="58" r="6" fill="#fff" stroke="#16181d" stroke-width="3"/>
-                  <g font-size="8" fill="#6b7686" letter-spacing="0.6">
-                    <rect x="14" y="124" width="44" height="16" rx="4" fill="#fff" stroke="#e3e7ed"/><text x="21" y="135">DEPOT</text>
-                    <rect x="136" y="38" width="48" height="16" rx="4" fill="#fff" stroke="#e3e7ed"/><text x="143" y="49">SERVICE</text>
-                    <rect x="352" y="32" width="42" height="16" rx="4" fill="#fff" stroke="#e3e7ed"/><text x="359" y="43">ROUTE</text>
-                  </g>
-                </svg>
+                <div class="lf-map-canvas">
+                  <iframe
+                    class="lf-google-map"
+                    title="Google Maps route from Cape Town to Gqeberha via Johannesburg and Durban"
+                    src="https://maps.google.com/maps?q=South%20Africa&z=5&output=embed"
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade"
+                    allowfullscreen
+                  ></iframe>
+                  <svg class="lf-map-route" viewBox="0 0 420 180" preserveAspectRatio="none" aria-hidden="true">
+                    <path id="lf-route-path" class="lf-route-line" d="M46 145 C90 128 123 89 174 65 S238 56 275 86 S324 107 367 132" />
+                    <g class="lf-route-stop"><circle cx="46" cy="145" r="5"/><text x="54" y="163">Cape Town</text></g>
+                    <g class="lf-route-stop"><circle cx="174" cy="65" r="5"/><text x="181" y="57">Johannesburg</text></g>
+                    <g class="lf-route-stop"><circle cx="275" cy="86" r="5"/><text x="282" y="80">Durban</text></g>
+                    <g class="lf-route-stop"><circle cx="367" cy="132" r="5"/><text x="306" y="155">Gqeberha</text></g>
+                    <g class="lf-moving-vehicle" aria-hidden="true">
+                      <animateMotion dur="18s" repeatCount="indefinite" rotate="0">
+                        <mpath href="#lf-route-path" />
+                      </animateMotion>
+                      <rect x="-9" y="-5" width="12" height="8" rx="2" />
+                      <path d="M3 -3h5l3 3v3H3z" />
+                      <circle cx="-5" cy="4" r="2" />
+                      <circle cx="7" cy="4" r="2" />
+                    </g>
+                  </svg>
+                </div>
               </div>
               <div class="lf-assets">
                 <p class="lf-label"><span>ASSET TYPES</span><em>Explore tools</em></p>
@@ -91,14 +117,17 @@ export function render(container) {
             <article class="lf-card"><span class="lf-num">01</span><p class="lf-big">FLEET</p><h3>Vehicles</h3><p>Keep car, van, and truck records, assignments, and status in one place.</p><a href="#/vehicles">Manage vehicles</a></article>
             <article class="lf-card"><span class="lf-num">02</span><p class="lf-big">PEOPLE</p><h3>Drivers</h3><p>Keep driver profiles and licence details close to the vehicles they operate.</p><a href="#/drivers">Manage drivers</a></article>
             <article class="lf-card"><span class="lf-num">03</span><p class="lf-big">SERVICE</p><h3>Maintenance</h3><p>Log servicing, review costs, and keep an eye on upcoming requirements.</p><a href="#/maintenance">Manage maintenance</a></article>
+            <article class="lf-card"><span class="lf-num">04</span><p class="lf-big">OVERVIEW</p><h3>Fleet dashboard</h3><p>See active, unassigned, and in-maintenance vehicles alongside driver and service totals.</p><a href="#/dashboard">View dashboard</a></article>
+            <article class="lf-card"><span class="lf-num">05</span><p class="lf-big">REMINDERS</p><h3>Expiry monitoring</h3><p>Spot insurance, roadworthy, and driver licence dates that are expired or coming due.</p><a href="#/dashboard">Review expiry warnings</a></article>
+            <article class="lf-card"><span class="lf-num">06</span><p class="lf-big">FIND RECORDS</p><h3>Search and filters</h3><p>Find vehicles by registration, make, model, or status, and narrow lists to the records you need.</p><a href="#/vehicles">Search fleet records</a></article>
           </div>
         </section>
       </main>
 
       <footer class="lf-bottom">
         <div class="lf-wrap lf-footer">
-          <div class="lf-brand"><span class="lf-logo">F</span><span><strong>Fleetline</strong><small>FLEET OPERATIONS</small></span></div>
-          <small>Clearer fleet operations, every day.</small>
+          <div class="lf-brand"><img class="lf-logo lf-brand-image" src="/images/vehicle-mark.png" alt="" /><span><strong>Vehicle Fleet</strong><small>MANAGEMENT SYSTEM</small></span></div>
+          <small>Vehicle records, driver assignments, and maintenance in one place.</small>
         </div>
       </footer>
     </div>
