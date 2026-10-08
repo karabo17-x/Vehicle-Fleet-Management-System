@@ -51,11 +51,12 @@ function buildShell() {
 
   const brand = document.createElement('div');
   brand.className = 'lf-brand';
-  const logo = document.createElement('span');
-  logo.className = 'lf-logo';
-  logo.textContent = 'F';
+  const logo = document.createElement('img');
+  logo.className = 'lf-logo lf-brand-image';
+  logo.src = '/images/vehicle-mark.png';
+  logo.alt = '';
   const name = document.createElement('strong');
-  name.textContent = 'Fleetline';
+  name.textContent = 'Vehicle Fleet';
   brand.append(logo, name);
 
   const label = document.createElement('p');
@@ -102,6 +103,7 @@ function updateShell(currentHash) {
   topbar.classList.toggle('hidden', !loggedIn || landing);
   shell.classList.toggle('no-sidebar', !loggedIn || landing);
   content.classList.toggle('content-landing', landing);
+  content.classList.toggle('content-login', currentHash === '#/login');
   roleBadge.textContent = getRole() || '';
 
   nav.querySelectorAll('a').forEach((a) => {
