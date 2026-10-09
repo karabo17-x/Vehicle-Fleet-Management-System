@@ -36,7 +36,7 @@ function setMessage(box, text, type) {
 
 export async function render(container) {
   // Keep in line with backend/app/routers/maintenance.py.
-  // The backend has no role checks on maintenance yet. If it adds them, update these.
+  // Staff can log and read service records; only managers and admins can delete them.
   const role = getRole();
   const canDelete = role === 'admin' || role === 'manager';
 
