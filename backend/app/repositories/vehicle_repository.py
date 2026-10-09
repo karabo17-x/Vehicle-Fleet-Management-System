@@ -12,13 +12,13 @@ class VehicleRepository:
     def create(self, vehicle: Vehicle) -> Vehicle:
         self.db.add(vehicle)
         self.db.commit()
-        self.db.refrsh(vehicle)
+        self.db.refresh(vehicle)
         return vehicle
 
     def get(self, vehicle_id: int) -> Vehicle | None:
         return self.db.get(Vehicle, vehicle_id)
 
-    def get_by_reistration(self, registration_number: str) -> Vehicle | None:
+    def get_by_registration(self, registration_number: str) -> Vehicle | None:
         stmt = select(Vehicle).where(Vehicle.registration_number == registration_number)
         return self.db.execute(stmt).scalar_one_or_none()
 
