@@ -5,7 +5,8 @@ import { getRole } from '../auth/session.js';
 import { formatDate, formatCurrency } from '../utils/formatters.js';
 
 const WARN_DAYS = 30; // warn when something expires within this many days
-const LIMIT = 200; // counts below are taken from up to this many records
+const LIMIT = 200; // enough rows for vehicle and driver summary counts
+const RECENT_SERVICE_LIMIT = 5;
 
 function daysUntil(value) {
   if (!value) return null;
@@ -103,7 +104,7 @@ export async function render(container) {
   const [vehicleResult, driverResult, serviceResult] = await Promise.allSettled([
     listVehicles({ limit: LIMIT }),
     listDrivers({ limit: LIMIT }),
-    listMaintenance({ limit: LIMIT }),
+    listMaintenance({ limit: RECENT_SERVICE_LIMIT }),
   ]);
   loadingBox.classList.add('hidden');
 
@@ -173,9 +174,9 @@ export async function render(container) {
   /* ---------- Recent service ---------- */
 
   const vehicleById = new Map(vehicles.map((v) => [v.id, v.registration_number]));
-  const recent = [...services]
-    .sort((a, b) => new Date(b.service_date) - new Date(a.service_date))
-    .slice(0, 5);
+  // The maintenance endpoint returns rows newest first; fetch just those
+  // rows while retaining its total for the summary card above.
+  const recent = services;
 
   const recentRows = recent.map((record) => [
     formatDate(record.service_date),
