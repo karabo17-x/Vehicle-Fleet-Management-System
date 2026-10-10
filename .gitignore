@@ -32,3 +32,8 @@ htmlcov/
 /frontend/dist/
 # Do not commit internal auth keys
 /auth/internal/keys/
+
+#docs
+/.~lock.VFMS_Test_Cases.docx#
+
+
