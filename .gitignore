@@ -20,7 +20,9 @@ htmlcov/
 .env
 .env.*
 !.env.example
-*.pem# Local/back-end helper scripts
+*.pem
+
+# Local/back-end helper scripts
 /backend/scripts/
 # Generated or authoritative contract files (do not commit)
 /vfms-contract.json
@@ -33,7 +35,7 @@ htmlcov/
 # Do not commit internal auth keys
 /auth/internal/keys/
 
-#docs
-/.~lock.VFMS_Test_Cases.docx#
+# LibreOffice lock file for the VFMS test-case document
+/docs/.~lock.VFMS_Test_Cases.docx#
 
 
